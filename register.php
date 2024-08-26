@@ -43,14 +43,14 @@ if($password == $cpassword) {
 
 			try {
 				//Server settings
-				$mail->SMTPDebug = 0;                      
-				$mail->isSMTP();                                           
-				$mail->Host       = 'smtp.gmail.com';                    
-				$mail->SMTPAuth   = true;                                   
-				$mail->Username   = 'neilohene@gmail.com';                    
-				$mail->Password   = 'cmtkbjexpyicmpxh';                 //    Gmail uses App passwords now, so set one up          
-				$mail->SMTPSecure = 'ssl';                            
-				$mail->Port       = 465;                                   
+				$mail->SMTPDebug = 0;
+				$mail->isSMTP();
+				$mail->Host       = 'smtp.gmail.com';
+				$mail->SMTPAuth   = true;
+				$mail->Username   = 'neilohene@gmail.com';
+				$mail->Password   = 'cmtkbjexpyicmpxh';                 //    Gmail uses App passwords now, so set one up
+				$mail->SMTPSecure = 'ssl';
+				$mail->Port       = 465;
 
 				//Recipients
 				$mail->setFrom('KTUComplaintHUB@ktu.edu.gh', 'KTUComplaintHUB2024');
@@ -59,7 +59,7 @@ if($password == $cpassword) {
 				// Content
 				$mail->isHTML(true);                                  // Set email format to HTML
 				$mail->Subject = 'Activate Your Account';
-				$mail->Body    = '<h1>Hello </h1> '.$name.'..!<br/>You are registered, please click the link below</h1><br/><a href="http://localhost:3000/active.php?usercode='.$_POST['email'].'">Activate Now</a>';
+				$mail->Body    = '<h1>Hello </h1> '.$name.'..!<br/>You are registered, please click the link below</h1><br/><a href="http://localhost:8000/active.php?usercode='.$_POST['email'].'">Activate Now</a>';
 
 				$mail->send();
 				echo 'Email sent successfully.';

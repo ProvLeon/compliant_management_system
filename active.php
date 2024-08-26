@@ -16,7 +16,7 @@ if(isset($_GET['usercode'])){
 
 if(isset($_GET['activated'])){
 	echo '<script type=text/javascript> alert("Activation Successful!!!")</script>';
-						header("Refresh : 0; URL=http://localhost:3000/");
+						header("Refresh : 0; URL=http://localhost:8000/");
 }
 else{
 	echo 'Cant Login ...:(';
