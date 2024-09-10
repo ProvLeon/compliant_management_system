@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__ . '/config.php';
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -65,7 +68,7 @@ if($password == $cpassword) {
                     // Content
                     $mail->isHTML(true);
                     $mail->Subject = 'Activate Your Account';
-                    $mail->Body    = '<h1>Hello ' . $name . '</h1><br/>You are registered, please click the link below to activate your account<br/><a href="http://localhost:8000/active.php?usercode=' . $email . '">Activate Now</a>';
+                    $mail->Body    = '<h1>Hello ' . $name . '</h1><br/>You are registered, please click the link below to activate your account<br/><a href=' .BASE_URL . '/active.php?usercode=' . $email . '">Activate Now</a>';
 
                     $mail->send();
                     echo 'Email sent successfully.';

@@ -18,6 +18,13 @@ if(isset($_POST['send']))
         'Content-Type: text/html; charset=UTF-8'
     );
 
+    if(@mail($to, $subject, $message, implode("\r\n", $headers))) {
+        echo "<script>alert('Email accepted for delivery');</script>";
+    } else {
+        $error = error_get_last();
+        echo "<script>alert('Email could not be sent. Error: " . addslashes($error['message']) . "');</script>";
+    }
+
     // Attempt to send the email
     if(mail($to, $subject, $message, implode("\r\n", $headers)))
     {
