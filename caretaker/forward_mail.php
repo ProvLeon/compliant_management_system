@@ -1,7 +1,8 @@
 <?php
-require_once __DIR__ . '/../config.php'; // Adjust the path as needed
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/sendMail/PHPMailerAutoload.php';
 
-$mail = @$_GET['mail'];
+$mail = isset($_GET['mail']) ? $_GET['mail'] : '';
 
 if(isset($_POST['send']))
 {
@@ -9,33 +10,40 @@ if(isset($_POST['send']))
     $subject = "Complaint Forward";
     $message = $_POST['msg'];
 
-    // Additional headers
-    $headers = array(
-        'From: KTUComplaintHUB2022 <KTUComplaintHUB@ktu.edu.gh>',
-        'Reply-To: KTUComplaintHUB@ktu.edu.gh',
-        'X-Mailer: PHP/' . phpversion(),
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8'
-    );
+    $mailer = new PHPMailer(true); // Enable exceptions
+    try {
+        $mailer->isSMTP();
+        $mailer->Host = 'smtp.gmail.com';
+        $mailer->SMTPAuth = true;
+        $mailer->Username = EMAIL_ACC;
+        $mailer->Password = EMAIL_PASSWORD;
+        $mailer->SMTPSecure = 'ssl'; // Use 'ssl' instead of PHPMailer::ENCRYPTION_SMTPS
+        $mailer->Port = 465;
 
-    if(@mail($to, $subject, $message, implode("\r\n", $headers))) {
-        echo "<script>alert('Email accepted for delivery');</script>";
-    } else {
-        $error = error_get_last();
-        echo "<script>alert('Email could not be sent. Error: " . addslashes($error['message']) . "');</script>";
-    }
+        $mailer->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
 
-    // Attempt to send the email
-    if(mail($to, $subject, $message, implode("\r\n", $headers)))
-    {
+        $mailer->setFrom(EMAIL_ACC, 'KTUComplaintHUB2022');
+        $mailer->addAddress($to);
+        $mailer->addReplyTo(EMAIL_ACC, 'KTUComplaintHUB2022');
+
+        $mailer->isHTML(true);
+        $mailer->Subject = $subject;
+        $mailer->Body    = $message;
+
+        $mailer->SMTPDebug = 2; // Enable verbose debug output
+
+        $mailer->send();
         echo "<script>alert('Email sent successfully');</script>";
         echo "<script>window.location.href = '" . BASE_URL . "/caretaker/index.php';</script>";
         exit;
-    }
-    else
-    {
-        $error = error_get_last()['message'];
-        echo "<script>alert('Email could not be sent. Error: " . addslashes($error) . "');</script>";
+    } catch (Exception $e) {
+        echo "<script>alert('Email could not be sent. Error: " . addslashes($mailer->ErrorInfo) . "');</script>";
     }
 }
 ?>

@@ -1,64 +1,83 @@
 <?php
-  $mail = @$_GET['mail'];
-if(isset($_POST['send']))
-{
-  $header ="From : KTUComplaintHUB2022<KTUComplaintHUB@ktu.edu.gh>";
-  $email=$_POST['email'];
-  $msg = $_POST['msg'];
-  if(mail($email,$header,$msg))
-  {
-  echo "<script>alert('email sent')</script>";
-  echo "<script>window.open('index.php','_self')</script>";
-  }
-else {
-  echo "<script>alert('email not sent check some errors here')</script>";
-  
-  }
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/sendMail/PHPMailerAutoload.php';
+
+$mail = isset($_GET['mail']) ? htmlspecialchars($_GET['mail']) : '';
+
+if(isset($_POST['send'])) {
+    $to = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $subject = "Complaint Forward";
+    $message = filter_input(INPUT_POST, 'msg', FILTER_SANITIZE_STRING);
+
+    $mailer = new PHPMailer(true);
+    try {
+        $mailer->isSMTP();
+        $mailer->Host = 'smtp.gmail.com';
+        $mailer->SMTPAuth = true;
+        $mailer->Username = EMAIL_ACC;
+        $mailer->Password = EMAIL_PASSWORD;
+        $mailer->SMTPSecure = 'tls';
+        $mailer->Port = 587;
+
+        $mailer->setFrom(EMAIL_ACC, 'KTUComplaintHUB2022');
+        $mailer->addAddress($to);
+        $mailer->addReplyTo(EMAIL_ACC, 'KTUComplaintHUB2022');
+
+        $mailer->isHTML(true);
+        $mailer->Subject = $subject;
+        $mailer->Body    = $message;
+
+        $mailer->send();
+        echo "<script>alert('Email sent successfully');</script>";
+        echo "<script>window.location.href = '" . BASE_URL . "/admin/index.php';</script>";
+        exit;
+    } catch (Exception $e) {
+        echo "<script>alert('Email could not be sent. Error: " . addslashes($mailer->ErrorInfo) . "');</script>";
+    }
 }
 ?>
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forward Mail</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<form action="forward_mail.php" method="post">
-<table border="5" class="table">
-        <tbody><tr>
-          <td colspan="2" align="center"><h3>Email Confirmation Form !</h3></td>
-        </tr>
-	
-	<tr>
-          <td>Email</td>   
-          <td><input type="text" class="form-control" value='<?php echo $mail ?>' />
-          </td>
-        </tr>
-        
-	<tr>
-          <td>To:</td>   
-          <td><input type="email" class="form-control" name="email" required pattern="\S+@ktu.edu.gh">
-          </td>
-        </tr> 
-	<tr>
-          <td>Message:</td>   
-          <td><textarea cols="20" row="20" name="msg" required></textarea>
-          </td>
-        </tr>
-       
-	 <tr>
-          <td colspan="2">
-            <div class="text-center"><button class="btn btn-danger" name="send" value="send mail" type="submit">Send Mail</button>
-            <a href="index.php"><input type="button" class="btn btn-danger" value="Back" /></a>
-            </div>
-          </td>
-        </tr>
-     </tbody>
-</table>
-</form>
+    <div class="container">
+        <form action="forward_mail.php<?php echo $mail ? '?mail=' . urlencode($mail) : ''; ?>" method="post">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td colspan="2" align="center"><h3>Email Confirmation Form</h3></td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td><input type="text" class="form-control" value='<?php echo $mail; ?>' readonly /></td>
+                    </tr>
+                    <tr>
+                        <td>To:</td>
+                        <td><input type="email" class="form-control" name="email" required pattern="\S+@ktu\.edu\.gh$"></td>
+                    </tr>
+                    <tr>
+                        <td>Message:</td>
+                        <td><textarea class="form-control" rows="5" name="msg" required></textarea></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="text-center">
+                                <button class="btn btn-primary" name="send" type="submit">Send Mail</button>
+                                <a href="<?php echo BASE_URL; ?>/admin/index.php" class="btn btn-secondary">Back</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
 </body>
 </html>

@@ -1,56 +1,42 @@
 <?php
-//$conn = mysqli_connect("localhost","root","root","complaint_nitc17") or die("data base not connected");
-include('connection.php');
-	$sid = $_POST['sid'];
-	$name = $_POST['name'];
-	$email = $_POST['email'];
-	$description = $_POST['description'];
-	//echo $sid.$name.$email.$description;
-    
+// feedback.php
+require_once __DIR__ . '/connection.php';
 
-    $sql="select rollno from student where rollno='$sid' and email='$email'";
-	$res=mysqli_query($conn,$sql);
-	$count=mysqli_num_rows($res);
-	//echo $count;
-	//if($password==$cpassword)
-	//{
-		//echo $password;
-	//echo $cpassword;
-	//echo$rollno;
-	//echo$name;
-   if($count>0)
-    {
-    //	echo '<script type=text/javascript> alert("you are already registered!!!!!......login Now.")</script>';
-       //  header("Refresh : 0; URL=index.html");
-   // }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sid = filter_input(INPUT_POST, 'sid', FILTER_SANITIZE_STRING);
+    $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
 
+    // Prepare and execute the query to check if the student exists
+    $stmt = $conn->prepare("SELECT rollno FROM student WHERE rollno = ? AND email = ?");
+    $stmt->bind_param("ss", $sid, $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $count = $result->num_rows;
+    $stmt->close();
 
+    if ($count > 0) {
+        $fid = mt_rand(1, 10000);
 
-    			$fid= rand(1,10000);
+        // Prepare and execute the query to insert feedback
+        $stmt = $conn->prepare("INSERT INTO feedback (sid, name, email, description, fid) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssi", $sid, $name, $email, $description, $fid);
 
-		  $sql1="insert into feedback (sid,name,email,description,fid) values ('$sid','$name','$email','$description',$fid)";
-	   if ($conn->query($sql1) === TRUE) 
-	   {
-
-        //echo '<script type=text/javascript> alert("Thank You For Your Feedback")</script>';
-        		/*  $sql1=" SELECT fid from feedback where email like '".$email."'";
-        		    $result = $conn->query($sql1);
-        		  if ($result)
-        		  {
-        		  
-
-        		  $row=$result->fetch_assoc();
-        		  $x=$row['fid'];*/
-        echo '<script type=text/javascript> alert("Thank You For Your Feedback .Your Feedback Id is '.$fid.'")</script>';
-        header("Refresh : 0; URL=index.html");
-       }   
-      
+        if ($stmt->execute()) {
+            echo '<script type="text/javascript">alert("Thank you for your feedback. Your Feedback ID is ' . $fid . '");</script>';
+            echo '<script type="text/javascript">window.location.href = "' . BASE_URL . '";</script>';
+        } else {
+            echo '<script type="text/javascript">alert("Error submitting feedback. Please try again.");</script>';
+        }
+        $stmt->close();
+    } else {
+        echo '<script type="text/javascript">alert("Invalid User! Please login.");</script>';
+        echo '<script type="text/javascript">window.location.href = "' . BASE_URL . '";</script>';
     }
-
-else{
-echo '<script type=text/javascript> alert("Invaild User !!!!!......login Now.")</script>';
-         header("Refresh : 0; URL=index.html");
-} 
-
-		
+} else {
+    // If the request method is not POST, redirect to the home page
+    header("Location: " . BASE_URL);
+    exit();
+}
 ?>
