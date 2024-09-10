@@ -1,34 +1,48 @@
 <?php
+// sendmail.php
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../student/sendMail/PHPMailerAutoload.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $name = $_POST['name'] ?? '';
-    $message = $_POST['message'] ?? '';
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
 
-    if (!empty($email) && !empty($name) && !empty($message)) {
-        // Validate email address
-        function is_valid_email($email) {
-            return filter_var($email, FILTER_VALIDATE_EMAIL) && !preg_match('/(content-type|bcc:|cc:|to:)/i', $email);
-        }
-        
-        if (!is_valid_email($email)) {
+    if ($email && $name && $message) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             echo "Invalid email address.";
-        } else {
-            // Send email
-            $to = "your-email";
-            $subject = "Contact Form Submission";
-            $headers = "From: " . htmlspecialchars($name) . " <" . htmlspecialchars($email) . ">\r\n";
-            $headers .= "Reply-To: " . htmlspecialchars($email) . "\r\n";
-            $headers .= "X-Mailer: PHP/" . phpversion();
-            $message = htmlspecialchars($message);
+            exit();
+        }
 
-            if (mail($to, $subject, $message, $headers)) {
-                echo "Email sent successfully.";
-            } else {
-                echo "Failed to send email.";
-            }
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = EMAIL_ACC;
+            $mail->Password = EMAIL_PASSWORD;
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+
+            $mail->setFrom($email, $name);
+            $mail->addAddress(EMAIL_ACC, 'KTUComplaintHUB2024');
+            $mail->addReplyTo($email, $name);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Contact Form Submission';
+            $mail->Body = "Name: {$name}<br>Email: {$email}<br>Message: {$message}";
+
+            $mail->send();
+            echo "Email sent successfully.";
+        } catch (Exception $e) {
+            echo "Failed to send email. Error: {$mail->ErrorInfo}";
         }
     } else {
         echo "Please fill in all required fields.";
     }
+} else {
+    header("Location: " . BASE_URL);
+    exit();
 }
 ?>

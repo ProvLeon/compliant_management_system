@@ -2,28 +2,36 @@
 session_start();
 require_once(__DIR__ . '/../connection.php');
 
-if (!$conn) {
-    die("Database connection failed: " . mysqli_connect_error());
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['caretaker_login'])) {
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'];
 
-if(isset($_POST['caretaker_login'])) {
-    $mail = trim($_POST['email']);
-    $pass = trim($_POST['password']);
+    if ($email && $password) {
+        $sql = "SELECT `email`, `password` FROM `caretaker` WHERE `email` = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $caretaker = $result->fetch_assoc();
 
-    $sql = "SELECT `email` FROM `caretaker` WHERE `email`=? AND `password`=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $mail, $pass);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if($result->num_rows > 0) {
-        $_SESSION['userMail'] = $mail;
-        $_SESSION['userPass'] = $pass;
-        header('Location: index.php?loginDone');
-        exit();
+        if ($caretaker && password_verify($password, $caretaker['password'])) {
+            $_SESSION['caretaker_email'] = $email;
+            header('Location: index.php?loginDone');
+            exit();
+        } else {
+            $error = "Invalid caretaker credentials.";
+        }
     } else {
-        echo '<script type="text/javascript">alert("Invalid caretaker. Try Again");</script>';
-        echo '<script type="text/javascript">window.location.href = "../index.html";</script>';
+        $error = "Please enter both email and password.";
+    }
+
+    if (isset($error)) {
+        $_SESSION['login_error'] = $error;
+        header('Location: ../index.html');
+        exit();
     }
 }
+
+header('Location: ../index.html');
+exit();
 ?>

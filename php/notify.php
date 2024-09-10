@@ -1,23 +1,41 @@
 <?php
-// Email Submit
-if (isset($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    // Sanitize email to prevent header injections
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    
-    // Construct email headers
-    $headers = "From: $email\r\n" .
-               "Reply-To: $email\r\n" .
-               "X-Mailer: PHP/" . phpversion();
-    
-    // Send email
-    $recipient = "neilohene@gmail.com"; // Replace with your email
-    $subject = "New message from website contact form";
-    $message = "Email: $email";
-    
-    if (mail($recipient, $subject, $message, $headers)) {
-        echo "Your message has been sent!";
+// notify.php
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../student/sendMail/PHPMailerAutoload.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+
+    if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = EMAIL_ACC;
+            $mail->Password = EMAIL_PASSWORD;
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+
+            $mail->setFrom(EMAIL_ACC, 'KTUComplaintHUB2024');
+            $mail->addAddress('neilohene@gmail.com');
+            $mail->addReplyTo($email);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'New message from website contact form';
+            $mail->Body = "Email: {$email}";
+
+            $mail->send();
+            echo "Your message has been sent!";
+        } catch (Exception $e) {
+            echo "Oops! Something went wrong. Error: {$mail->ErrorInfo}";
+        }
     } else {
-        echo "Oops! Something went wrong.";
+        echo "Invalid email address.";
     }
+} else {
+    header("Location: " . BASE_URL);
+    exit();
 }
 ?>

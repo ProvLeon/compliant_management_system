@@ -1,36 +1,41 @@
 <?php
+session_start();
+require_once(__DIR__ . '/../connection.php');
 
-    //$conn = new mysqli('localhost','root','root','complaint_nitc17');
-    include('../connection.php');
-    if(isset($_POST['student_login']))
-    {
-        $mail = trim($_POST['rollno']);
-        $pass = trim($_POST['password']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_login'])) {
+    $rollno = filter_input(INPUT_POST, 'rollno', FILTER_SANITIZE_STRING);
+    $password = $_POST['password'];
 
-       // echo $mail;
-        //echo $pass;
-        $sql = "SELECT `rollno` FROM `student` WHERE `rollno`='$mail' AND `password`='$pass' and `active`='y'";
+    if ($rollno && $password) {
+        $sql = "SELECT `rollno`, `password`, `active` FROM `student` WHERE `rollno` = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $rollno);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $student = $result->fetch_assoc();
 
-        $result = $conn->query($sql);
-
-        echo $result->num_rows;
-        if($result->num_rows>0)
-        {
-            session_start();
-            $_SESSION['userMail'] = $mail;
-            $_SESSION['userPass'] = $pass;
-            header('location:index.php?loginDone');
-
-        }else{
-
-            echo '<script type=text/javascript> alert(" Register and activate your account before login :(")</script>';
-          header("Refresh : 0; URL=../index.html");
-           // echo '<a href="../index.html">Back to home page </a>';  
-
-
-
-            //echo 'No result Found ...';
-            //echo '<a href="../index.html">Back to home page </a>';        
+        if ($student && password_verify($password, $student['password'])) {
+            if ($student['active'] === 'y') {
+                $_SESSION['student_rollno'] = $rollno;
+                header('Location: index.php?loginDone');
+                exit();
+            } else {
+                $error = "Please activate your account before logging in.";
+            }
+        } else {
+            $error = "Invalid login credentials.";
         }
+    } else {
+        $error = "Please enter both roll number and password.";
     }
+
+    if (isset($error)) {
+        $_SESSION['login_error'] = $error;
+        header('Location: ../index.html');
+        exit();
+    }
+}
+
+header('Location: ../index.html');
+exit();
 ?>
