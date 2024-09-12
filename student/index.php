@@ -13,17 +13,17 @@ if (!isset($_SESSION['userMail'])) {
 
   function show_forward_form()
   {
-    echo '<form action="index.php" method="GET" > 
-                <table class="table">                 
+    echo '<form action="index.php" method="GET" >
+                <table class="table">
                     <tr>
                       <td>Forward To </td>
                       <td><input class="form-control" type="text" name="email" placeholder="Enter Email Address to forward to "></td>
                     </tr>
-                    
+
                      <tr>
                       <td ></td>
                       <td><button type="submit" class="btn btn-danger"  name="forwardd" >Forward Now </button></td>
-                    </tr>       
+                    </tr>
               </table>
           <form>';
 
@@ -68,7 +68,7 @@ if (!isset($_SESSION['userMail'])) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html" style="background-color:black;font-size:26px;"><i
+          <a class="navbar-brand" href="index.php" style="background-color:black;font-size:26px;"><i
               class="fa fa-user-circle" aria-hidden="true">&nbsp;</i><?php echo $_SESSION['userMail']; ?></a>
         </div>
 
@@ -139,9 +139,9 @@ if (!isset($_SESSION['userMail'])) {
                   $result = $conn->query($listAll);
 
                   if ($result->num_rows > 0) {
-                    echo ' 
+                    echo '
                                                 <div class="panel-heading">
-                            <h2 align="center">List All Complaints</h2> 
+                            <h2 align="center">List All Complaints</h2>
                         </div><div class="panel-body">
 
                             <div class="" id="lisAll">
@@ -167,7 +167,7 @@ if (!isset($_SESSION['userMail'])) {
                       echo '<td>' . $temp['SEmail'] . '</td>';
                       echo '<td>' . $temp['status'] . '</td>';
                       echo '<td>' . $temp['Cby'] . '</td>';
-                      /*echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>'; 
+                      /*echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
                     echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; */
 
                     }
@@ -210,7 +210,7 @@ if (!isset($_SESSION['userMail'])) {
 
                             if ($result->num_rows > 0) {
                               echo '<div class="panel-heading1">
-                            <h2 align="center">Approved Complaints </h2> 
+                            <h2 align="center">Approved Complaints </h2>
                         </div>
                                                 <div class="panel-body1">
 
@@ -236,7 +236,7 @@ if (!isset($_SESSION['userMail'])) {
                                 echo '<td>' . $temp['SEmail'] . '</td>';
                                 echo '<td>' . $temp['status'] . '</td>';
                                 echo '<td>' . $temp['Cby'] . '</td>';
-                                /*echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>'; 
+                                /*echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
                               echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; */
 
                               }
@@ -280,7 +280,7 @@ if (!isset($_SESSION['userMail'])) {
 
                                       if ($result->num_rows > 0) {
                                         echo '<div class="panel-heading2">
-                            <h2 align="center">Discard Complaints </h2> 
+                            <h2 align="center">Discard Complaints </h2>
                         </div>
 
                         <div class="panel-body2">
@@ -355,7 +355,7 @@ if (!isset($_SESSION['userMail'])) {
 
                                                 if ($result->num_rows > 0) {
                                                   echo ' <div class="panel-heading3">
-                            <h2 align="center">Pending Complaints </h2> 
+                            <h2 align="center">Pending Complaints </h2>
                         </div>
 
                         <div class="panel-body3">
@@ -382,7 +382,7 @@ if (!isset($_SESSION['userMail'])) {
                                                     echo '<td>' . $temp['SEmail'] . '</td>';
                                                     echo '<td>' . $temp['status'] . '</td>';
                                                     echo '<td>' . $temp['Cby'] . '</td>';
-                                                    /*  echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>'; 
+                                                    /*  echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
                                                     echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; */
 
                                                   }
@@ -437,8 +437,8 @@ if (!isset($_SESSION['userMail'])) {
 
                                               }
 
-                                              //call Send Mail Function 
-                                            
+                                              //call Send Mail Function
+
                                               if (isset($_GET['forwardd'])) {
 
                                                 // echo 'Send Mail is working Properly '; OK

@@ -1,38 +1,46 @@
 <?php
 require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/sendMail/PHPMailerAutoload.php';
+require_once __DIR__ . '/../student/sendMail/PHPMailerAutoload.php';
 
-$mail = isset($_GET['mail']) ? htmlspecialchars($_GET['mail']) : '';
+$mail = isset($_GET['mail']) ? htmlspecialchars($_GET['mail'], ENT_QUOTES, 'UTF-8') : '';
 
 if(isset($_POST['send'])) {
-    $to = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $to = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $subject = "Complaint Forward";
-    $message = filter_input(INPUT_POST, 'msg', FILTER_SANITIZE_STRING);
+    $message = htmlspecialchars($_POST['msg'], ENT_QUOTES, 'UTF-8');
 
-    $mailer = new PHPMailer(true);
-    try {
-        $mailer->isSMTP();
-        $mailer->Host = 'smtp.gmail.com';
-        $mailer->SMTPAuth = true;
-        $mailer->Username = EMAIL_ACC;
-        $mailer->Password = EMAIL_PASSWORD;
-        $mailer->SMTPSecure = 'tls';
-        $mailer->Port = 587;
+    if (!$to) {
+        echo "<script>alert('Invalid email address');</script>";
+    } else {
+        $mailer = new PHPMailer(true);
+        try {
+            // Server settings
+            $mailer->SMTPDebug = 2; // Enable verbose debug output
+            $mailer->isSMTP();
+            $mailer->Host       = SMTP_HOST;
+            $mailer->SMTPAuth   = true;
+            $mailer->Username   = EMAIL_ACC;
+            $mailer->Password   = EMAIL_PASSWORD;
+            $mailer->SMTPSecure = SMTP_SECURE;
+            $mailer->Port       = SMTP_PORT;
 
-        $mailer->setFrom(EMAIL_ACC, 'KTUComplaintHUB2022');
-        $mailer->addAddress($to);
-        $mailer->addReplyTo(EMAIL_ACC, 'KTUComplaintHUB2022');
+            // Recipients
+            $mailer->setFrom(EMAIL_ACC, 'KTU Complaint Hub');
+            $mailer->addAddress($to);
+            $mailer->addReplyTo(EMAIL_ACC, 'KTU Complaint Hub');
 
-        $mailer->isHTML(true);
-        $mailer->Subject = $subject;
-        $mailer->Body    = $message;
+            // Content
+            $mailer->isHTML(true);
+            $mailer->Subject = $subject;
+            $mailer->Body    = $message;
 
-        $mailer->send();
-        echo "<script>alert('Email sent successfully');</script>";
-        echo "<script>window.location.href = '" . BASE_URL . "/admin/index.php';</script>";
-        exit;
-    } catch (Exception $e) {
-        echo "<script>alert('Email could not be sent. Error: " . addslashes($mailer->ErrorInfo) . "');</script>";
+            $mailer->send();
+            echo "<script>alert('Email sent successfully');</script>";
+            echo "<script>window.location.href = '" . BASE_URL . "/admin/index.php';</script>";
+            exit;
+        } catch (Exception $e) {
+            echo "<script>alert('Email could not be sent. Error: " . addslashes($mailer->ErrorInfo) . "');</script>";
+        }
     }
 }
 ?>
@@ -61,7 +69,7 @@ if(isset($_POST['send'])) {
                     </tr>
                     <tr>
                         <td>To:</td>
-                        <td><input type="email" class="form-control" name="email" required pattern="\S+@ktu\.edu\.gh$"></td>
+                        <td><input type="email" class="form-control" name="email" required ></td>
                     </tr>
                     <tr>
                         <td>Message:</td>

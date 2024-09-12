@@ -48,7 +48,7 @@ CREATE TABLE `caretaker` (
   `ctype` varchar(25) NOT NULL,
   `contact` varchar(10) NOT NULL,
   `address` varchar(250) NOT NULL,
-  `email` varchar(256) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='caretaker';
 
@@ -74,7 +74,7 @@ CREATE TABLE `complaint` (
   `description` varchar(400) NOT NULL,
   `sid` varchar(15) NOT NULL,
   `type` varchar(25) NOT NULL,
-  `SEmail` varchar(250) NOT NULL,
+  `SEmail` varchar(255) NOT NULL,
   `status` varchar(15) NOT NULL,
   `Cby` varchar(25) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -99,7 +99,7 @@ CREATE TABLE `feedback` (
   `fid` int(25) NOT NULL,
   `sid` varchar(25) NOT NULL,
   `name` varchar(25) NOT NULL,
-  `email` varchar(25) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `description` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -121,7 +121,7 @@ CREATE TABLE `student` (
   `rollno` varchar(10) NOT NULL,
   `name` varchar(66) NOT NULL,
   `contact` varchar(10) NOT NULL,
-  `email` varchar(250) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `hostel` varchar(30) NOT NULL,
   `course` varchar(30) NOT NULL,
   `password` varchar(25) DEFAULT NULL,

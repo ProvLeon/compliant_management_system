@@ -1,91 +1,108 @@
 <?php
-
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/connection.php';
+require_once __DIR__ . '/student/sendMail/PHPMailerAutoload.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-include ('student/sendMail/PHPMailerAutoload.php');
-include('connection.php');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize inputs
+    $rollno = htmlspecialchars(trim($_POST['rollno']), ENT_QUOTES, 'UTF-8');
+    $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
+    $password = $_POST['password']; // Password is not hashed
+    $cpassword = $_POST['cpassword'];
+    $contact = htmlspecialchars(trim($_POST['contact']), ENT_QUOTES, 'UTF-8');
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $hostel = htmlspecialchars(trim($_POST['hostel']), ENT_QUOTES, 'UTF-8');
+    $course = htmlspecialchars(trim($_POST['course']), ENT_QUOTES, 'UTF-8');
 
-$rollno = $_POST['rollno'];
-$name = $_POST['name'];
-$password = $_POST['password'];
-$cpassword = $_POST['cpassword'];
-$contact = $_POST['contact'];
-$email = $_POST['email'];
-$hostel = $_POST['hostel'];
-$course = $_POST['course'];
+    // Validate inputs
+    if (!preg_match('/^[A-Za-z0-9]{10}$/', $rollno)) {
+        die('<script>alert("Invalid Index Number. It should be exactly 10 characters long and contain only letters and numbers."); window.location.href="registration.html";</script>');
+    }
 
-if($password == $cpassword) {
-    // Check if roll number already exists
-    $stmt = $conn->prepare("SELECT * FROM student WHERE rollno = ?");
-    $stmt->bind_param("s", $rollno);
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        die('<script>alert("Invalid email format."); window.location.href="registration.html";</script>');
+    }
+
+    if (strlen($password) < 8) {
+        die('<script>alert("Password must be at least 8 characters long."); window.location.href="registration.html";</script>');
+    }
+
+    if ($password !== $cpassword) {
+        die('<script>alert("Passwords do not match."); window.location.href="registration.html";</script>');
+    }
+
+    if (!preg_match('/^[0-9]{10}$/', $contact)) {
+        die('<script>alert("Contact number must be 10 digits."); window.location.href="registration.html";</script>');
+    }
+
+    // Check if roll number or email already exists
+    $stmt = $conn->prepare("SELECT * FROM student WHERE rollno = ? OR email = ?");
+    $stmt->bind_param("ss", $rollno, $email);
     $stmt->execute();
     $result = $stmt->get_result();
     $count = $result->num_rows;
 
-    if($count > 0) {
-        echo '<script type="text/javascript">alert("You are already registered! Please login.");
-        location.href="index.html";</script>';
-    } else {
-        // Check if email already exists
-        $stmt = $conn->prepare("SELECT * FROM student WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $email_count = $result->num_rows;
+    if ($count > 0) {
+        die('<script>alert("This roll number or email is already registered."); window.location.href="registration.html";</script>');
+    }
 
-        if($email_count > 0) {
-            echo '<script type="text/javascript">alert("This email is already registered. Please use a different email.");
-            location.href="index.html";</script>';
-        } else {
-            // Insert new student record
-            $stmt = $conn->prepare("INSERT INTO student (rollno, name, contact, email, hostel, course, password, active) VALUES (?, ?, ?, ?, ?, ?, ?, 'n')");
-            $stmt->bind_param("sssssss", $rollno, $name, $contact, $email, $hostel, $course, $password);
+    // Insert new student record with plain text password
+    $stmt = $conn->prepare("INSERT INTO student (rollno, name, contact, email, hostel, course, password, active) VALUES (?, ?, ?, ?, ?, ?, ?, 'n')");
+    $stmt->bind_param("sssssss", $rollno, $name, $contact, $email, $hostel, $course, $password);
 
-            if($stmt->execute()) {
-                echo '<script type="text/javascript">alert("Registered successfully! Please login.")</script>';
+    if (!$stmt->execute()) {
+        $error = $stmt->error;
+        die("<script>alert('Registration failed: $error'); window.location.href='registration.html';</script>");
+    }
 
-                $mail = new PHPMailer();
+    // Send activation email
+    $mail = new PHPMailer(true);
 
-                try {
-                    //Server settings
-                    $mail->SMTPDebug = 0;
-                    $mail->isSMTP();
-                    $mail->Host       = 'smtp.gmail.com';
-                    $mail->SMTPAuth   = true;
-                    $mail->Username   = 'neilohene@gmail.com';
-                    $mail->Password   = 'cmtkbjexpyicmpxh';
-                    $mail->SMTPSecure = 'ssl';
-                    $mail->Port       = 465;
+    try {
+        // Server settings
+        $mail->SMTPDebug = 2;
+        $mail->isSMTP();
+        $mail->Host       = SMTP_HOST;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = EMAIL_ACC;
+        $mail->Password   = EMAIL_PASSWORD;
+        $mail->SMTPSecure = SMTP_SECURE;
+        $mail->Port       = SMTP_PORT;
 
-                    //Recipients
-                    $mail->setFrom('KTUComplaintHUB@ktu.edu.gh', 'KTUComplaintHUB2024');
-                    $mail->addAddress($email);
+        // Recipients
+        $mail->setFrom(EMAIL_ACC, 'KTU Complaint Hub');
+        $mail->addAddress($email, $name);
 
-                    // Content
-                    $mail->isHTML(true);
-                    $mail->Subject = 'Activate Your Account';
-                    $mail->Body    = '<h1>Hello ' . $name . '</h1><br/>You are registered, please click the link below to activate your account<br/><a href=' .BASE_URL . '/active.php?usercode=' . $email . '">Activate Now</a>';
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Activate Your KTU Complaint Hub Account';
+        $activation_link = BASE_URL . '/activate.php?email=' . urlencode($email) . '&token=' . bin2hex(random_bytes(16));
+        $mail->Body    = "
+        <html>
+        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+            <h2>Welcome to KTU Complaint Hub, $name!</h2>
+            <p>Thank you for registering with us. To activate your account, please click the button below:</p>
+            <p style='text-align: center;'>
+                <a href='$activation_link' style='display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;'>Activate Your Account</a>
+            </p>
+            <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
+            <p>$activation_link</p>
+            <p>If you didn't register for a KTU Complaint Hub account, please ignore this email.</p>
+            <p>Best regards,<br>The KTU Complaint Hub Team</p>
+        </body>
+        </html>";
 
-                    $mail->send();
-                    echo 'Email sent successfully.';
-                } catch (Exception $e) {
-                    echo 'Failed to send email. Error: ', $mail->ErrorInfo;
-                }
-
-                header("Refresh : 0; URL=index.html");
-            } else {
-                echo '<script type="text/javascript">alert("Registration failed. Please try again.")</script>';
-                header("Refresh : 0; URL=index.html");
-            }
-        }
+        $mail->send();
+        echo '<script>alert("Registered successfully! Please check your email to activate your account."); window.location.href="index.html";</script>';
+    } catch (Exception $e) {
+        echo '<script>alert("Registered successfully, but failed to send activation email. Error: ' . $mail->ErrorInfo . '"); window.location.href="index.html";</script>';
     }
 } else {
-    echo '<script type="text/javascript">alert("Password not matched! Please try again.")</script>';
-    header("Location: index.html");
+    header("Location: registration.html");
     exit();
 }
 ?>

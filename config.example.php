@@ -8,5 +8,8 @@
     define('DB_NAME', 'FinalProject'); // Change this to your database name
 
     // Email configuration
-    define('EMAIL_ACC', 'your_email_here');
-    define('EMAIL_PASSWORD', 'your_app_password_here');
+    define('EMAIL_ACC', 'your-email@gmail.com');
+    define('EMAIL_PASSWORD', 'your-app-password');
+    define('SMTP_HOST', 'smtp.gmail.com');
+    define('SMTP_SECURE', 'tls');
+    define('SMTP_PORT', 587);

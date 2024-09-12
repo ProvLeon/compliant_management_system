@@ -314,38 +314,40 @@
             <!-- feedback Form -->
             <form class="form-horizontal" role="form" id="feedback_form" action="feedback.php" method="post">
               <br />
-              <h2 align="center">Please Give Your valuable Feedback </h2>
+              <h2 align="center">Please Give Your Valuable Feedback</h2>
               <br />
 
               <div class="form-group">
-                <label for="firstName" class="col-sm-3 control-label">Index Number</label>
+                <label for="sid" class="col-sm-3 control-label">Student ID</label>
                 <div class="col-sm-6">
-                  <input type="text" name="sid" class="form-control" pattern="[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
-                    autofocus required>
-
+                  <input type="text" id="sid" name="sid" class="form-control" pattern="[A-Za-z0-9]{10}$"
+                         placeholder="Enter your 9-character Student ID" maxlength="9" autofocus required>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="firstName" class="col-sm-3 control-label">Full Name</label>
+                <label for="name" class="col-sm-3 control-label">Full Name</label>
                 <div class="col-sm-6">
-                  <input type="text" name="name" class="form-control" required>
-
+                  <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
                 </div>
               </div>
+
               <div class="form-group">
                 <label for="email" class="col-sm-3 control-label">Email</label>
                 <div class="col-sm-6">
-                  <input type="email" name="email" class="form-control" required>
+                  <input type="email" id="email" name="email" class="form-control"
+                         placeholder="Enter your email address" required
+                         pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="country" class="col-sm-3 control-label">Description</label>
+                <label for="description" class="col-sm-3 control-label">Feedback</label>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control" name="description" required>
+                  <textarea id="description" name="description" class="form-control" rows="4"
+                            placeholder="Enter your feedback here" required></textarea>
                 </div>
-              </div> <!-- /.form-group -->
+              </div>
 
               <div class="form-group">
                 <div class="col-sm-6 col-sm-offset-3">

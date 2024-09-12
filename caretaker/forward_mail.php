@@ -13,12 +13,12 @@ if(isset($_POST['send']))
     $mailer = new PHPMailer(true); // Enable exceptions
     try {
         $mailer->isSMTP();
-        $mailer->Host = 'smtp.gmail.com';
+        $mailer->Host = SMTP_HOST;
         $mailer->SMTPAuth = true;
         $mailer->Username = EMAIL_ACC;
         $mailer->Password = EMAIL_PASSWORD;
-        $mailer->SMTPSecure = 'ssl'; // Use 'ssl' instead of PHPMailer::ENCRYPTION_SMTPS
-        $mailer->Port = 465;
+        $mailer->SMTPSecure = SMTP_SECURE; // Use 'ssl' instead of PHPMailer::ENCRYPTION_SMTPS
+        $mailer->Port = SMTP_PORT;
 
         $mailer->SMTPOptions = array(
             'ssl' => array(

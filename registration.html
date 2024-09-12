@@ -294,73 +294,76 @@
   <!--old try-->
   <section class="inspiration" id="four">
     <div class="overlay">
-
-
-      </article>
       <div class="col col-md-12" id="r_form">
-        <!-- feedback Form -->
-        <!-- <form class="form-horizontal" role="form" id="feedback_form" action="feedback.php" method="post">-->
         <form class="form-horizontal" role="form" action="register.php" method="post">
           <br /><br><br>
-          <h2 align="center">Registration form !!</h2>
+          <h2 align="center">Registration Form</h2>
           <br />
 
           <div class="form-group">
-            <label for="firstName" class="col-sm-3 control-label">Index Number:</label>
+            <label for="rollno" class="col-sm-3 control-label">Roll Number:</label>
             <div class="col-sm-6">
-              <input type="text" name="rollno" class="form-control" pattern="(?i)^[a-zA-Z0-9]*\d{10}d@ktu\.edu\.gh|(?i)^[a-zA-Z0-9]*B\d{9}"
-                autofocus required>
-
+              <input type="text" id="rollno" name="rollno" class="form-control"
+                     pattern="^[A-Za-z0-9]{10}$"
+                     placeholder="Enter your 10-character Roll Number"
+                     maxlength="10" autofocus required>
+              <small class="form-text text-muted">Enter exactly 10 characters (letters and/or numbers)</small>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="firstName" class="col-sm-3 control-label">Name:</label>
+            <label for="name" class="col-sm-3 control-label">Full Name:</label>
             <div class="col-sm-6">
-              <input type="text" name="name" class="form-control" required>
-
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="email" class="col-sm-3 control-label">Password:</label>
-            <div class="col-sm-6">
-              <input type="password" name="password" class="form-control" required>
+              <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="country" class="col-sm-3 control-label">Confirm Password:</label>
+            <label for="password" class="col-sm-3 control-label">Password:</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control" name="cpassword" required>
-            </div>
-          </div> <!-- /.form-group -->
-          <div class="form-group">
-            <label for="country" class="col-sm-3 control-label">Contact:</label>
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="contact" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="country" class="col-sm-3 control-label">Student Mail:</label>
-            <div class="col-sm-6">
-              <input type="email" class="form-control" name="email" pattern="(?i)^[a-zA-Z0-9]*\d{10}d@ktu\.edu\.gh|(?i)^[a-zA-Z0-9]*B\d{9}@ktu.edu.gh" required>
-              <!-- You can delete the pattern element from there so you can try other mail patterns or alter it-->
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="country" class="col-sm-3 control-label">Hostel:</label>
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="hostel" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="country" class="col-sm-3 control-label">Program:</label>
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="course" required>
+              <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+              <small class="form-text text-muted">Password must be at least 8 characters long</small>
             </div>
           </div>
 
+          <div class="form-group">
+            <label for="cpassword" class="col-sm-3 control-label">Confirm Password:</label>
+            <div class="col-sm-6">
+              <input type="password" id="cpassword" class="form-control" name="cpassword" placeholder="Confirm your password" required>
+            </div>
+          </div>
 
+          <div class="form-group">
+            <label for="contact" class="col-sm-3 control-label">Contact:</label>
+            <div class="col-sm-6">
+              <input type="tel" id="contact" class="form-control" name="contact" placeholder="Enter your contact number" pattern="[0-9]{10}" required>
+              <small class="form-text text-muted">Enter a 10-digit phone number</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="col-sm-3 control-label">Student Mail:</label>
+            <div class="col-sm-6">
+              <input type="email" id="email" class="form-control" name="email"
+                     pattern="(?i)^[a-zA-Z0-9]*\d{10}d@ktu\.edu\.gh|(?i)^[a-zA-Z0-9]*B\d{9}@ktu.edu.gh"
+                     placeholder="Enter your KTU email address" required>
+              <small class="form-text text-muted">Use your official KTU email address</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="hostel" class="col-sm-3 control-label">Hostel:</label>
+            <div class="col-sm-6">
+              <input type="text" id="hostel" class="form-control" name="hostel" placeholder="Enter your hostel name" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="course" class="col-sm-3 control-label">Program:</label>
+            <div class="col-sm-6">
+              <input type="text" id="course" class="form-control" name="course" placeholder="Enter your program name" required>
+            </div>
+          </div>
 
           <div class="form-group">
             <div class="col-sm-6 col-sm-offset-3">
@@ -370,34 +373,13 @@
 
           <div class="form-group">
             <div class="col-sm-6 col-sm-offset-3">
-              <button type="submit" class="btn btn-primary btn-block"><a href="index.html"></a>Register Here</button>
+              <button type="submit" class="btn btn-primary btn-block">Register Here</button>
             </div>
           </div>
-        </form> <!-- /form -->
-        <!-- feedback Form ends here -->
+        </form>
       </div>
     </div>
-    </div>
-    </div>
   </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   <!--sub-form-->
@@ -455,9 +437,9 @@
 				KTU Campus P.O, Greater Accra,
 				Madina, Ghana</b></p>
 
- 
-           </div> 
-   
+
+           </div>
+
   </div>
 </section> -->
   <!--sub-form end-->
