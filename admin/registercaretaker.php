@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/connection.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize inputs
@@ -25,15 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("issssss", $tid, $name, $ctype, $contact, $address, $email, $password);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Caretaker registered successfully!'); window.location.href='admin/index.php';</script>";
+        echo "<script>alert('Caretaker registered successfully!'); window.location.href='index.php';</script>";
     } else {
-        echo "<script>alert('Error registering caretaker: " . $stmt->error . "'); window.location.href='admin/index.php';</script>";
+        echo "<script>alert('Error registering caretaker: " . $stmt->error . "'); window.location.href='index.php';</script>";
     }
 
     $stmt->close();
     $conn->close();
 } else {
-    header("Location: admin/index.php");
+    header("Location: index.php");
     exit();
 }
 ?>

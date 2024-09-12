@@ -751,7 +751,7 @@ function show_forward_form(){
            <h3 align="center">Caretaker Registration Form !</h3>
         </div>
         <div class="modal-body">
-          <form action="../registercaretaker.php" method="post">
+          <form action="registercaretaker.php" method="post">
 
 
 
