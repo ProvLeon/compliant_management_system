@@ -11,5 +11,5 @@
     define('EMAIL_ACC', 'your-email@gmail.com');
     define('EMAIL_PASSWORD', 'your-app-password');
     define('SMTP_HOST', 'smtp.gmail.com');
-    define('SMTP_SECURE', 'tls');
-    define('SMTP_PORT', 587);
+    define('SMTP_SECURE', 'ssl');
+    define('SMTP_PORT', 465);
