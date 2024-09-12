@@ -8,6 +8,8 @@ if(!isset($_SESSION['userMail'])){
 
 require_once(__DIR__ . '/../connection.php');
 
+$conn = Connect();
+
 // Check if $conn is defined and is a valid mysqli connection
 if (!isset($conn) || !($conn instanceof mysqli)) {
     die("Database connection failed. Please check your connection file.");

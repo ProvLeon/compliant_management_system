@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../student/sendMail/PHPMailerAutoload.php';
+require_once __DIR__ . '/sendMail/PHPMailerAutoload.php';
 
 $mail = isset($_GET['mail']) ? htmlspecialchars($_GET['mail'], ENT_QUOTES, 'UTF-8') : '';
 

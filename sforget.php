@@ -1,6 +1,9 @@
 <?php
 session_start();
 require_once 'connection.php';
+
+$conn = Connect();
+
 $db = mysqli_select_db($conn, 'rick');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

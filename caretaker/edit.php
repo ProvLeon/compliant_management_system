@@ -1,5 +1,7 @@
 <?php
-	include('../connection.php');
+	require_once __DIR__ . '/connection.php';
+
+	$conn = Connect();
 
 	if( isset($_POST['edit']) )
 	{

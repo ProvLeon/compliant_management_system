@@ -2,6 +2,8 @@
 session_start();
 require_once(__DIR__ . '/../connection.php');
 
+$conn = Connect();
+
 if (!$conn) {
     die("Database connection failed: " . mysqli_connect_error());
 }

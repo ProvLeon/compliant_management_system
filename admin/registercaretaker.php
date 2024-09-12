@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../connection.php';
 
+$conn = Connect();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize inputs
     $tid = filter_var($_POST['tid'], FILTER_SANITIZE_NUMBER_INT); // Assuming tid should be an integer

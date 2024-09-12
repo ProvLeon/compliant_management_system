@@ -24,25 +24,26 @@
     }
 
     </style>
-    
+
     <boby>
 
 
-       
+
         <h1>Search Results !!</h1>
-        
+
         <fieldset>
           <legend align="center"><span class="number">1</span>Your Search Information</legend>
-          
+
    <?php
 //$conn = mysqli_connect("localhost","root","root","complaint_nitc17") or die("data base not connected");
 
    session_start();
-include('connection.php');
+   include('connection.php');
+   $conn = Connect();
 
 	$cby = $_POST['Cby'];
 	$cid = $_POST['cid'];
-	
+
 	$sql="select * from complaint where cid='$cid' or Cby='$cby' and type='".$_SESSION['ajay'] ."'" ;
 	$res=mysqli_query($conn,$sql);
     $n=mysqli_num_rows($res);
@@ -73,7 +74,7 @@ include('connection.php');
 	<td><?php echo $row['SEmail'] ?></td>
 	<td><?php echo $row['status'] ?></td>
 	<td><?php echo $row['Cby'] ?></td></tr>
-<?php	
+<?php
 	}
 ?>
 	</table><center>
@@ -84,15 +85,13 @@ else
 {
 echo '<script type=text/javascript> alert("Wrong Details entered !!!!!......Try Again.");
         document.location.href="caretaker/index.php?loginDone";</script>';
-     
+
 }
 ?>
-                  
-                        
+
+
         </fieldset>
       </form>
-      
+
     </body>
 </html>
-
-

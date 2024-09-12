@@ -1,7 +1,9 @@
 <?php
 
     //$conn = new mysqli('localhost','root','root','complaint_nitc17');
-    include('../connection.php');
+    require_once(__DIR__ . '/../connection.php');
+    $conn = Connect();
+
     if(isset($_POST['student_login']))
     {
         $mail = trim($_POST['rollno']);

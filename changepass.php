@@ -2,6 +2,8 @@
 session_start();
 require_once(__DIR__ . '/connection.php');
 
+$conn = Connect();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $rollno = filter_input(INPUT_POST, 'userName', FILTER_SANITIZE_STRING);
     $current_password = $_POST['currentPassword'];

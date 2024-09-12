@@ -6,20 +6,20 @@ if(!isset($_SESSION['userMail'])){
 
  //$conn  = new mysqli('localhost','root','root','complaint_nitc17');
  include('../connection.php');
-
+$conn = Connect();
 
 function show_forward_form(){
-    echo '<form action="index.php" method="GET" > 
-                <table class="table">                 
+    echo '<form action="index.php" method="GET" >
+                <table class="table">
                     <tr>
                       <td>Forward To </td>
                       <td><input class="form-control" type="text" name="email" placeholder="Enter Email Addredd to foreward to "></td>
                     </tr>
-                    
+
                      <tr>
                       <td ></td>
                       <td><button type="submit" class="btn btn-danger"  name="forwardd" >Forward Now </button></td>
-                    </tr>       
+                    </tr>
               </table>
           <form>';
 
@@ -50,15 +50,15 @@ function myFunction() {
 }
 </script>
         <!-- /. NAV SIDE  -->
-        
-                    
-                           
-                 
-            <div class="row">         
-                <div class="col-md-12 col-sm-12 col-xs-12">                     
+
+
+
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="panel panel-default">
-                        
-                                            
+
+
                                     <?php
                                         if(isset($_GET['listall']))
                                         {
@@ -68,7 +68,7 @@ function myFunction() {
 
                                               if($result->num_rows>0){
                                                 echo '<div class="panel-heading">
-                            <h2 align="center">List All Complaints</h2> 
+                            <h2 align="center">List All Complaints</h2>
                         </div>
 
                         <div class="panel-body">
@@ -85,48 +85,48 @@ function myFunction() {
                                                             <th>Complaint By</th>
                                                             <tr>';
 
-                                                               
-                                                    while($temp = $result->fetch_assoc()){
-                                                         echo  '<tr><td>'.$temp['cid'].'</td>';                                                                
-                                                        echo  '<td>'.$temp['description'].'</td>'; 
 
-                                                        echo  '<td>'.$temp['type'].'</td>'; 
-                                                        echo  '<td>'.$temp['sid'].'</td>'; 
-                                                        echo  '<td>'.$temp['SEmail'].'</td>'; 
-                                                        echo  '<td>'.$temp['status'].'</td>'; 
-                                                        echo  '<td>'.$temp['Cby'].'</td>'; 
-                                                         // echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>'; 
-                                                        //echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; 
+                                                    while($temp = $result->fetch_assoc()){
+                                                         echo  '<tr><td>'.$temp['cid'].'</td>';
+                                                        echo  '<td>'.$temp['description'].'</td>';
+
+                                                        echo  '<td>'.$temp['type'].'</td>';
+                                                        echo  '<td>'.$temp['sid'].'</td>';
+                                                        echo  '<td>'.$temp['SEmail'].'</td>';
+                                                        echo  '<td>'.$temp['status'].'</td>';
+                                                        echo  '<td>'.$temp['Cby'].'</td>';
+                                                         // echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
+                                                        //echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>';
 
                                                     }
                                                     echo '</table>';
 
-                                                       
+
 
 
                                                   } else{
 
 
                                                 echo 'No Complaint is found ';
-                                              }  
+                                              }
 
                                         }
 
 
 
                                     ?>
-                             
+
 
 
   <center><button onclick="myFunction()">Export</button>
           <a href="index.php?listall"><input type="button" value="Back" /></a></center>
 
-    <script src="assets/js/jquery-1.10.2.js"></script>  
+    <script src="assets/js/jquery-1.10.2.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/jquery.metisMenu.js"></script>
 
     <script src="assets/js/custom.js"></script>
-    
-   
+
+
 </body>
 </html>

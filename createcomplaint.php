@@ -1,5 +1,8 @@
 <?php
 include('connection.php');
+
+$conn = Connect();
+
 session_start();
 	$sid = $_SESSION['userMail'];
 	$email = $_POST['email'];
@@ -9,7 +12,7 @@ session_start();
 	$description = $_POST['description'];
 
     	$sql1="insert into complaint (description,sid,type,SEmail,status,Cby) values('$description','$sid','$ctype','$email','$status','$cby')";
-		if ($conn->query($sql1) === TRUE) 
+		if ($conn->query($sql1) === TRUE)
 		{
     	echo '<script type=text/javascript> setTimeout(function(){alert("Complaint Registered successfully!!!!!")}, 3000)</script>';
     	}
@@ -32,7 +35,7 @@ session_start();
 		}
 		//echo $i."<br>".$count;
     	echo "<script type=text/javascript> alert('Thank You For Complaint  .Your Complaint no is ".$var_cid."')</script>";
-        
+
   header ("Location: student/index.php?loginDone");
 	exit();
 ?>

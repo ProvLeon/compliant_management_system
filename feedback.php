@@ -2,6 +2,8 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/connection.php';
 
+$conn = Connect();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize inputs
     $sid = htmlspecialchars(trim($_POST['sid']), ENT_QUOTES, 'UTF-8');

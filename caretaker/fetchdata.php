@@ -1,5 +1,6 @@
 <?php
 $conn = new mysqli('localhost','m150034ca','m150034ca','db_m150034ca');
+
 if($_POST['fetchdata'])
 {
 
@@ -7,7 +8,7 @@ if($_POST['fetchdata'])
 	$result  = $conn->query($sql);
 	if($result->num_rows>0)
 	{
-		
+
 
 		echo '<table class="table table-striped table-bordered table-hover">
 	            <thead>
@@ -16,7 +17,7 @@ if($_POST['fetchdata'])
 	                    <th>NAME</th>
 	                    <th>LAST NAME </th>
 	                    <th>EMAIL</th>
-	                    <th>PASSWORD</th>   
+	                    <th>PASSWORD</th>
 	                </tr>
 	            </thead><tbody>';
 		while($r =$result->fetch_assoc())
@@ -26,7 +27,7 @@ if($_POST['fetchdata'])
 	                    <td>'.$r['name'].'</td>
 	                    <td>'.$r['lastname'].'</td>
 	                    <td>'.$r['email'].'</td>
-	                    <td>'.$r['pass'].'</td>   
+	                    <td>'.$r['pass'].'</td>
 	                  </tr>';
 		}
 		echo '</tbody></table>';

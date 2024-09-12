@@ -2,8 +2,17 @@
 // connection.php
 require_once __DIR__ . '/config.php';
 
-$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+function Connect() {
+    $dbhost = DB_HOST;
+    $dbuser = DB_USER;
+    $dbpass = DB_PASS;
+    $dbname = DB_NAME;
 
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+
+    }
+    return $conn;
 }

@@ -3,6 +3,8 @@ session_start();
 include 'dbconfig.php';
 include 'connection.php';
 
+$conn = Connect();
+
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 $newpassword = $_POST['newpassword'] ?? '';

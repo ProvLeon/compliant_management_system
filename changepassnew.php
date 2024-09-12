@@ -1,6 +1,8 @@
-	<?php 
+	<?php
 	//$conn = mysqli_connect("localhost","root","root","complaint_nitc17") or die("data base not connected");
 	include('connection.php');
+	$conn = Connect();
+
 		if(isset($_POST['submit']))
 		{
 		//$un=$_POST['userName'];
@@ -14,7 +16,7 @@
 		{
 			$rw=mysqli_num_rows($r);
 			echo $rw;
-		
+
 			if($result["password"]==$cp)
 			{
 					$update_password="UPDATE student SET password='$np' WHERE password='$cp'";
@@ -37,10 +39,10 @@
 				header("Location: student/index.php?loginDone");
 				//echo "Sorry !!! YOUR CURRENT PASSWORD IS NOT MATCH WITH DATA BASE";
 			}
-		
+
 		}
-	
-	
+
+
 	else
 	{
 		echo '<script type=text/javascript> alert("New Password & confirmPassword  Not Matched!!!")</script>';

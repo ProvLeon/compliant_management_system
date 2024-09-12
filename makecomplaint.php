@@ -1,6 +1,8 @@
 <?php
 include('connection.php');
 
+$conn = Connect();
+
 	$rollno = $_POST['rollno'];
 	$name = $_POST['name'];
 	$password = $_POST['password'];
@@ -15,7 +17,7 @@ include('connection.php');
 
 	if($password==$cpassword)
 	{
-		
+
    if($count>0)
     {
     	echo '<script type=text/javascript> alert("you are already registered!!!!!......login Now.")</script>';
@@ -24,13 +26,13 @@ include('connection.php');
     else{
 
     	  $sql1="insert into student (rollno,name,password,contact,email,hostel,course) values('$rollno','$name','$password','$contact','$email','$hostel','$course')";
-	   if ($conn->query($sql1) === TRUE) 
+	   if ($conn->query($sql1) === TRUE)
 	   {
        echo '<script type=text/javascript> alert("Registered successfully!!!!!......login Now.")</script>';
 	   header("Location: index.html");
 	}
      }
-     } 
+     }
 
 
 
@@ -40,8 +42,7 @@ echo '<script type=text/javascript> alert("Password not matched !!!!!......login
 }
 
 
-    
-	
-	
-?>
 
+
+
+?>

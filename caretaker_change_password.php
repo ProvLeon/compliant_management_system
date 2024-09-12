@@ -1,6 +1,8 @@
-	<?php 
+	<?php
 	//$conn = mysqli_connect("localhost","root","root","complaint_nitc17") or die("data base not connected");
-	include('connection.php');
+	require_once('connection.php');
+	$conn = Connect();
+
 		if(isset($_POST['submit']))
 		{
 		//$un=$_POST['userName'];
@@ -39,8 +41,8 @@
 			}
 		}
 		}
-	
-	
+
+
 	else
 	{
 		echo '<script type=text/javascript> alert("New Password & confirmPassword Not Matched!!!")</script>';

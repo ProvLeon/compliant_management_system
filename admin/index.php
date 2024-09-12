@@ -6,8 +6,10 @@ if(!isset($_SESSION['userMail'])){
 }
 
  //$conn  = new mysqli('localhost','root','root','complaint_nitc17');
- include('../connection.php');
+ // require_once __DIR__ . '/sendMail/PHPMailerAutoload.php';
 
+ include('../connection.php');
+$conn = Connect();
 
 function show_forward_form(){
     echo '<form action="index.php" method="GET" >
@@ -683,34 +685,41 @@ function show_forward_form(){
 
                                     //call Send Mail Function
 
-                                    if(isset($_GET['forwardd']))
-                                    {
+                                    // if(isset($_GET['forwardd']))
+                                    // {
 
-                                       // echo 'Send Mail is working Properly '; OK
-                                       // $getEmail = $_GET['email'];
-                                      //  require 'sendMail/PHPMailerAutoload.php';
-                                       // $mail = new PHPMailer;
-                                        //$mail->isSMTP();
-                                        //$mail->Host = 'smtp.gmail.com';
-                                        //$mail->SMTPAuth = true;
-                                        //$mail->Username = 'YOUR EMAIL ADDRESS HERE ';
-                                       // $mail->Password = 'YOUR PASSSWORD HERE ';
-                                       // $mail->SMTPSecure = 'ssl';
-                                       // $mail->Port = 465;
-                                       // $mail->addAddress( $getEmail, 'SENDER NAME HERE ');
-                                       // $mail->isHTML(true);
-                                       // $mail->Subject = 'SOME TEXT HERE ';
-                                      //  $mail->Body    = 'BODY HERE E';
-                                        //$mail->AltBody = 'ALTERNATE TEXT HERE';
-                                        if(!mail('amitamora@gmail.com','kuchh ni ','No msg ','No header ','No prama ')) {
-                                            echo 'Message could not be sent.';
-                                            echo 'Mailer Error: ' . $mail->ErrorInfo;
-                                        } else {
-                                            echo '<h1>Message has been sent</h1>';
-                                           // header('Location:inedx.php?SendMailDone=yes');
-                                        }
+                                        // require 'sendMail/PHPMailerAutoload.php';
+                                        // require_once __DIR__ . '/../config.php';
+
+                                        // $mail = new PHPMailer;
+                                        // $mail->isSMTP();
+                                        // $mail->Host = SMTP_HOST;
+                                        // $mail->SMTPAuth = true;
+                                        // $mail->Username = EMAIL_ACC;
+                                        // $mail->Password = EMAIL_PASSWORD;
+                                        // $mail->SMTPSecure = SMTP_SECURE;
+                                        // $mail->Port = SMTP_PORT;
+                                        // $mail->addAddress('amitamora@gmail.com', 'SENDER NAME HERE');
+                                        // $mail->isHTML(true);
+                                        // $mail->Subject = 'SOME TEXT HERE';
+                                        // $mail->Body    = 'BODY HERE';
+                                        // $mail->AltBody = 'ALTERNATE TEXT HERE';
+
+                                        // if(!$mail->send()) {
+                                        //     echo 'Message could not be sent.';
+                                        //     echo 'Mailer Error: ' . $mail->ErrorInfo;
+                                        // } else {
+                                        //     echo '<h1>Message has been sent</h1>';
+                                        // }
+                                        // if(!mail('amitamora@gmail.com','kuchh ni ','No msg ','No header ','No prama ')) {
+                                        //     echo 'Message could not be sent.';
+                                        //     echo 'Mailer Error: ' . $mail->ErrorInfo;
+                                        // } else {
+                                        //     echo '<h1>Message has been sent</h1>';
+                                        //    // header('Location:inedx.php?SendMailDone=yes');
+                                        // }
                                             //Send Mail Ends Here
-                                    }
+                                    // }
 
 
 

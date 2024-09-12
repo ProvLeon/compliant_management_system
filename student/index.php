@@ -5,11 +5,12 @@ if (!isset($_SESSION['userMail'])) {
 } else {
   $userMail = $_SESSION['userMail'];
   //$conn  = new mysqli('localhost','root','root','complaint_nitc17');
-  include('../connection.php');
+  require_once(__DIR__ . '/../connection.php');
   //$sql_query="select Cby from complaint where SEmail ='".$_SESSION['userMail']."'";
   //  $r=mysqli_query($conn,$sql_query);
   // $result=mysqli_fetch_assoc($r);
   // $_SESSION['ajay']=$result['Cby'];
+  $conn = Connect();
 
   function show_forward_form()
   {
