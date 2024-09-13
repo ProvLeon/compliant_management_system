@@ -36,7 +36,8 @@
       color: blue;
     }
 
-    input[type="text"] {
+    input[type="text"],
+   input[type="tel"] {
       color: white;
     }
 
@@ -301,11 +302,11 @@
           <br />
 
           <div class="form-group">
-            <label for="rollno" class="col-sm-3 control-label">Roll Number:</label>
+            <label for="rollno" class="col-sm-3 control-label">Index Number:</label>
             <div class="col-sm-6">
               <input type="text" id="rollno" name="rollno" class="form-control"
                      pattern="^[A-Za-z0-9]{10}$"
-                     placeholder="Enter your 10-character Roll Number"
+                     placeholder="Enter your 10-character Index Number"
                      maxlength="10" autofocus required>
               <small class="form-text text-muted">Enter exactly 10 characters (letters and/or numbers)</small>
             </div>
@@ -322,7 +323,7 @@
             <label for="password" class="col-sm-3 control-label">Password:</label>
             <div class="col-sm-6">
               <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
-              <small class="form-text text-muted">Password must be at least 8 characters long</small>
+              <small class="form-text">Password must be at least 8 characters long</small>
             </div>
           </div>
 
@@ -337,7 +338,7 @@
             <label for="contact" class="col-sm-3 control-label">Contact:</label>
             <div class="col-sm-6">
               <input type="tel" id="contact" class="form-control" name="contact" placeholder="Enter your contact number" pattern="[0-9]{10}" required>
-              <small class="form-text text-muted">Enter a 10-digit phone number</small>
+              <small class="form-text">Enter a 10-digit phone number</small>
             </div>
           </div>
 
@@ -347,7 +348,7 @@
               <input type="email" id="email" class="form-control" name="email"
                      pattern="(?i)^[a-zA-Z0-9]*\d{10}d@ktu\.edu\.gh|(?i)^[a-zA-Z0-9]*B\d{9}@ktu.edu.gh"
                      placeholder="Enter your KTU email address" required>
-              <small class="form-text text-muted">Use your official KTU email address</small>
+              <small class="form-text">Use your official KTU email address</small>
             </div>
           </div>
 
