@@ -573,12 +573,13 @@ class="form-control" pattern="[a-zA-Z][0-9][0-9][0-9][0-9][0-9][0-9][a-zA-Z]{2}"
 
                                           <!--<input type="date" id="date" name="date"
 class="form-control" required="">-->
-                                          <br> <label for="description">Description:</label>
-                                          <input type="text" id="description" name="description" required=""
-                                            class="form-control">
+                                          <br>
+                                          <label for="description">Complaint Description:</label>
+                                          <textarea class="form-control" id="description" name="description" rows="5" style="width: 100%; resize: vertical;" placeholder="Please provide a detailed description of your complaint..." required></textarea>
 
 
                                         </fieldset>
+                                        <br/>
                                         <button type="submit" class="btn btn-danger">Complaint Now</button>
                                       </form>
                                     </div>
