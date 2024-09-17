@@ -1,27 +1,27 @@
 <?php
-	require_once __DIR__ . '/../connection.php';
+session_start();
+require_once __DIR__ . '/../connection.php';
 
-	$conn = Connect();
+$conn = Connect();
 
-	if( isset($_POST['edit']) )
-	{
-		$c_id = $_POST['hidden_cid'];
-		$stats= $_POST['select_status'];
-		$res= mysqli_query($conn,"update complaint set status='$stats' WHERE cid='$c_id'");
-		//echo $c_id."<br>".$stats;
-		echo '<script type=text/javascript> alert("Status Updated Successfully !!!!!")</script>';
-		 header("Location: index.php?listall");
-	}
+if(isset($_POST['edit']) && isset($_POST['hidden_cid']) && isset($_POST['select_status'])) {
+    $c_id = $_POST['hidden_cid'];
+    $stats = $_POST['select_status'];
 
-	if( isset($_POST['status']) )
-	{
-		$status = $_POST['status'];
-		$cid  	 = $_POST['cid'];
-		$sql     = "UPDATE complaint SET status='$status' WHERE cid='$cid'";
-		$res 	 = mysqli_query($sql)
+    $stmt = $conn->prepare("UPDATE complaint SET status=? WHERE cid=?");
+    $stmt->bind_param("si", $stats, $c_id);
 
-        or die("Could not update".mysqli_error());
+    if($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Status Updated Successfully!']);
+        header("Refresh: 0; URL=" . BASE_URL . '/caretaker/index.php');
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error updating status: ' . $conn->error]);
+    }
 
-	}
+    $stmt->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+}
 
+$conn->close();
 ?>
