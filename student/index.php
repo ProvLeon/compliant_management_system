@@ -1,16 +1,13 @@
 <?php
 session_start();
 if (!isset($_SESSION['userMail'])) {
-  header('location:student/login.php');
-} else {
-  $userMail = $_SESSION['userMail'];
-  //$conn  = new mysqli('localhost','root','root','complaint_nitc17');
-  require_once(__DIR__ . '/../connection.php');
-  //$sql_query="select Cby from complaint where SEmail ='".$_SESSION['userMail']."'";
-  //  $r=mysqli_query($conn,$sql_query);
-  // $result=mysqli_fetch_assoc($r);
-  // $_SESSION['ajay']=$result['Cby'];
-  $conn = Connect();
+    header('location:student/login.php');
+    exit();
+}
+
+require_once(__DIR__ . '/../connection.php');
+$conn = Connect();
+$userMail = $_SESSION['userMail'];
 
   function show_forward_form()
   {
@@ -33,574 +30,295 @@ if (!isset($_SESSION['userMail'])) {
   ?>
 
   <!DOCTYPE html>
-
+  <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome Student</title>
-    <link href="assets/css/bootstrap.css" rel="stylesheet" />
-    <link href="assets/css/font-awesome.css" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="assets/js/morris/morris-0.4.3.min.css" rel="stylesheet" />
-    <link href="assets/css/custom.css" rel="stylesheet" />
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
-    <style>
-      .navbar {
-        background-color: black;
-      }
-
-      .navbar-header {
-        background-color: black;
-      }
-
-      .nav li {
-        background-color: black;
-      }
-    </style>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Student Dashboard - Complaint Management System</title>
+      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+      <style>
+          body {
+              font-family: 'Roboto', sans-serif;
+              background-color: #f4f6f9;
+          }
+          .navbar {
+              background-color: #343a40;
+          }
+          .sidebar {
+              background-color: #343a40;
+              min-height: 100vh;
+              padding-top: 20px;
+          }
+          .sidebar .nav-link {
+              color: #fff;
+              padding: 10px 20px;
+          }
+          .sidebar .nav-link:hover {
+              background-color: #495057;
+          }
+          .sidebar .nav-link i {
+              margin-right: 10px;
+          }
+          .content {
+              padding: 20px;
+          }
+          .card {
+              border: none;
+              border-radius: 10px;
+              box-shadow: 0 0 10px rgba(0,0,0,0.1);
+              margin-bottom: 20px;
+          }
+          .card-header {
+              background-color: #007bff;
+              color: white;
+              border-radius: 10px 10px 0 0;
+          }
+          .table {
+              margin-bottom: 0;
+          }
+          .table th {
+              border-top: none;
+          }
+          .btn-action {
+              padding: 0.25rem 0.5rem;
+              font-size: 0.875rem;
+          }
+          .status-badge {
+              padding: 0.25em 0.6em;
+              font-size: 75%;
+              font-weight: 700;
+              border-radius: 0.25rem;
+          }
+          .status-pending { background-color: #ffc107; color: #212529; }
+          .status-approved { background-color: #28a745; color: #fff; }
+          .status-discarded { background-color: #dc3545; color: #fff; }
+      </style>
   </head>
-
   <body>
-    <div id="wrapper">
-      <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index.php" style="background-color:black;font-size:26px;"><i
-              class="fa fa-user-circle" aria-hidden="true">&nbsp;</i><?php echo $_SESSION['userMail']; ?></a>
-        </div>
-
-        <div style="color: white;
-            padding: 15px 50px 5px 50px;
-            float: right;
-            font-size: 16px;">
-          <div id="txt" style="color:white;">
-
-          </div><a href="logout.php" class="btn btn-danger square-btn-adjust">Logout</a>
-        </div>
-
-      </nav>
-
-      <nav class="navbar-default navbar-side" role="navigation">
-        <div class="sidebar-collapse">
-          <ul class="nav" id="main-menu">
-            <li class="text-center">
-              <img src="assets/img/find_user.png" class="user-image img-responsive" />
-            </li>
-
-            <li>
-
-              <a id="create" data-toggle="modal" data-target="#myModalc"><i class="fa fa-desktop fa-2x"></i>Create
-                Complaint</a>
-            </li>
-
-            <li>
-              <a href="index.php?listall" id="listAll"><i class="fa fa-desktop fa-2x"></i>List All Complaints</a>
-            </li>
-
-            <li>
-              <a href="index.php?approvedall" id="approvedAll"><i class="fa fa-desktop fa-2x"></i>Approved Complaints</a>
-            </li>
-            <!-- <li>
-                        <a  href="index.php?discardall" id="discardAll"><i class="fa fa-desktop fa-2x"></i>Discarded Complaints</a>
-                    </li> -->
-            <li>
-              <a href="index.php?pendingall" id="pendingAll"><i class="fa fa-desktop fa-2x"></i>Pending Complaints</a>
-            </li>
-
-            <li>
-
-              <a id="careAll" data-toggle="modal" data-target="#myModala"><i class="fa fa-desktop fa-2x"></i>change
-                password</a>
-            </li>
-
-
+      <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0">
+          <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Student Dashboard</a>
+          <ul class="navbar-nav px-3">
+              <li class="nav-item text-nowrap">
+                  <a class="nav-link" href="logout.php">Sign out</a>
+              </li>
           </ul>
-        </div>
       </nav>
-      <!-- /. NAV SIDE  -->
-      <div id="page-wrapper">
-        <div id="page-inner">
 
-
-
+      <div class="container-fluid">
           <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-              <div class="panel panel-default">
+              <nav class="col-md-2 d-none d-md-block sidebar">
+                  <div class="sidebar-sticky">
+                      <ul class="nav flex-column">
+                          <li class="nav-item">
+                              <a class="nav-link" href="#" data-toggle="modal" data-target="#createComplaintModal">
+                                  <i class="fas fa-plus-circle"></i> Create Complaint
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a class="nav-link" href="index.php?listall">
+                                  <i class="fas fa-list-alt"></i> All Complaints
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a class="nav-link" href="index.php?approvedall">
+                                  <i class="fas fa-check-circle"></i> Approved Complaints
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a class="nav-link" href="index.php?pendingall">
+                                  <i class="fas fa-clock"></i> Pending Complaints
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a class="nav-link" href="#" data-toggle="modal" data-target="#changePasswordModal">
+                                  <i class="fas fa-key"></i> Change Password
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </nav>
 
+              <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 content">
+                  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                      <h1 class="h2">Dashboard</h1>
+                  </div>
 
-
-                <?php
-                if (isset($_GET['listall'])) {
-                  $listAll = "SELECT * FROM complaint WHERE sid='$userMail'";
-                  // $listAll = "SELECT * FROM `complaint` WHERE 1";
-                  $result = $conn->query($listAll);
-
-                  if ($result->num_rows > 0) {
-                    echo '
-                                                <div class="panel-heading">
-                            <h2 align="center">List All Complaints</h2>
-                        </div><div class="panel-body">
-
-                            <div class="" id="lisAll">
-                                            ';
-
-                    echo '<table class="table ">';
-                    echo '<tr><th>CID</th>
-                                                            <th>Description</th>
-                                                            <th>Type</th>
-                                                            <th>SID</th>
-                                                            <th>Student Email</th>
-                                                            <th>Status</th>
-                                                            <th>Complaint By</th>
-                                                          <tr>';
-
-
-                    while ($temp = $result->fetch_assoc()) {
-                      echo '<tr><td>' . $temp['cid'] . '</td>';
-                      echo '<td>' . $temp['description'] . '</td>';
-
-                      echo '<td>' . $temp['type'] . '</td>';
-                      echo '<td>' . $temp['sid'] . '</td>';
-                      echo '<td>' . $temp['SEmail'] . '</td>';
-                      echo '<td>' . $temp['status'] . '</td>';
-                      echo '<td>' . $temp['Cby'] . '</td>';
-                      /*echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
-                    echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; */
-
-                    }
-                    echo '</table>';
-
-
-
-
-                  } else {
-
-
-                    echo 'No Complaint is found ';
+                  <?php
+                  // Function to generate complaint table
+                  function generateComplaintTable($result, $title) {
+                      if ($result->num_rows > 0) {
+                          echo '<div class="card">
+                                  <div class="card-header">
+                                      <h5 class="mb-0">' . $title . '</h5>
+                                  </div>
+                                  <div class="card-body">
+                                      <div class="table-responsive">
+                                          <table class="table table-hover">
+                                              <thead>
+                                                  <tr>
+                                                      <th>CID</th>
+                                                      <th>Description</th>
+                                                      <th>Type</th>
+                                                      <th>Status</th>
+                                                      <th>Date</th>
+                                                      <th>Actions</th>
+                                                  </tr>
+                                              </thead>
+                                              <tbody>';
+                          while ($row = $result->fetch_assoc()) {
+                              echo '<tr>
+                                      <td>' . $row['cid'] . '</td>
+                                      <td>' . substr($row['description'], 0, 50) . '...</td>
+                                      <td>' . $row['type'] . '</td>
+                                      <td><span class="status-badge status-' . strtolower($row['status']) . '">' . $row['status'] . '</span></td>
+                                      <td>' . $row['date'] . '</td>
+                                      <td>
+                                          <button class="btn btn-sm btn-info btn-action view-complaint" data-cid="' . $row['cid'] . '">View</button>
+                                      </td>
+                                    </tr>';
+                          }
+                          echo '</tbody></table></div></div></div>';
+                      } else {
+                          echo '<div class="alert alert-info">No complaints found.</div>';
+                      }
                   }
 
-                }
-
-
-
-                ?>
-
-                <!--Approved Complaint starts here-->
-                <div id="page-wrapper1">
-                  <div id="page-inner1">
-
-
-
-
-                    <div class="row1">
-                      <div class="col-md-12 col-sm-12 col-xs-121">
-                        <div class="panel panel-default1">
-
-
-
-
-                          <?php
-                          if (isset($_GET['approvedall'])) {
-
-                            $approvedAll = "SELECT * FROM complaint WHERE sid='$userMail' and status='approved'";
-                            $result = $conn->query($approvedAll);
-
-                            if ($result->num_rows > 0) {
-                              echo '<div class="panel-heading1">
-                            <h2 align="center">Approved Complaints </h2>
-                        </div>
-                                                <div class="panel-body1">
-
-                            <div class="" id="approvedAll">';
-
-                              echo '<table class="table ">';
-                              echo '<tr><th>CID</th>
-                                                            <th>Description</th>
-                                                            <th>Type</th>
-                                                            <th>SID</th>
-                                                            <th>Student Email</th>
-                                                            <th>Status</th>
-                                                            <th>Complaint By</th>
-                                                            <tr>';
-
-
-                              while ($temp = $result->fetch_assoc()) {
-                                echo '<tr><td>' . $temp['cid'] . '</td>';
-                                echo '<td>' . $temp['description'] . '</td>';
-
-                                echo '<td>' . $temp['type'] . '</td>';
-                                echo '<td>' . $temp['sid'] . '</td>';
-                                echo '<td>' . $temp['SEmail'] . '</td>';
-                                echo '<td>' . $temp['status'] . '</td>';
-                                echo '<td>' . $temp['Cby'] . '</td>';
-                                /*echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
-                              echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; */
-
-                              }
-                              echo '</table>';
-
-
-
-
-                            } else {
-
-
-                              echo 'No Complaint is found ';
-                            }
-
-                          }
-
-
-
-                          ?>
-
-
-                          <!--ends here-->
-
-
-                          <!--Discard Complaint starts here-->
-                          <div id="page-wrapper2">
-                            <div id="page-inner2">
-
-
-
-                              <div class="row2">
-                                <div class="col-md-12 col-sm-12 col-xs-122">
-                                  <div class="panel panel-default2">
-
-
-                                    <?php
-                                    if (isset($_GET['discardall'])) {
-
-                                      $discardAll = "SELECT * FROM complaint WHERE sid='$userMail' and status='discarded'";
-                                      $result = $conn->query($discardAll);
-
-                                      if ($result->num_rows > 0) {
-                                        echo '<div class="panel-heading2">
-                            <h2 align="center">Discard Complaints </h2>
-                        </div>
-
-                        <div class="panel-body2">
-
-                            <div class="" id="discardAll">';
-
-                                        echo '<table class="table ">';
-                                        echo '<tr><th>CID</th>
-                                                            <th>Description</th>
-                                                            <th>Type</th>
-                                                            <th>SID</th>
-                                                            <th>Student Email</th>
-                                                            <th>Status</th>
-                                                            <th>Complaint By</th>
-                                                            <tr>';
-
-
-                                        while ($temp = $result->fetch_assoc()) {
-                                          echo '<tr><td>' . $temp['cid'] . '</td>';
-                                          echo '<td>' . $temp['description'] . '</td>';
-
-                                          echo '<td>' . $temp['type'] . '</td>';
-                                          echo '<td>' . $temp['sid'] . '</td>';
-                                          echo '<td>' . $temp['SEmail'] . '</td>';
-                                          echo '<td>' . $temp['status'] . '</td>';
-                                          echo '<td>' . $temp['Cby'] . '</td>';
-                                          /* echo  '<td>
-                                          <a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
-                                         echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; */
-
-                                        }
-                                        echo '</table>';
-
-
-
-
-                                      } else {
-
-
-                                        echo 'No Complaint is found ';
-                                      }
-
-                                    }
-
-
-
-                                    ?>
-
-
-
-
-
-                                    <!--ends here-->
-
-                                    <!--Pending Complaint starts here-->
-                                    <div id="page-wrapper3">
-                                      <div id="page-inner3">
-
-
-
-
-                                        <div class="row3">
-                                          <div class="col-md-12 col-sm-12 col-xs-123">
-                                            <div class="panel panel-default3">
-
-
-                                              <?php
-                                              if (isset($_GET['pendingall'])) {
-
-                                                $pendingAll = "SELECT * FROM complaint WHERE sid='$userMail' and status='pending'";
-                                                $result = $conn->query($pendingAll);
-
-                                                if ($result->num_rows > 0) {
-                                                  echo ' <div class="panel-heading3">
-                            <h2 align="center">Pending Complaints </h2>
-                        </div>
-
-                        <div class="panel-body3">
-
-                            <div class="" id="pendingAll">';
-
-                                                  echo '<table class="table ">';
-                                                  echo '<tr><th>CID</th>
-                                                            <th>Description</th>
-                                                            <th>Type</th>
-                                                            <th>SID</th>
-                                                            <th>Student Email</th>
-                                                            <th>Status</th>
-                                                            <th>Complaint By</th>
-                                                            <tr>';
-
-
-                                                  while ($temp = $result->fetch_assoc()) {
-                                                    echo '<tr><td>' . $temp['cid'] . '</td>';
-                                                    echo '<td>' . $temp['description'] . '</td>';
-
-                                                    echo '<td>' . $temp['type'] . '</td>';
-                                                    echo '<td>' . $temp['sid'] . '</td>';
-                                                    echo '<td>' . $temp['SEmail'] . '</td>';
-                                                    echo '<td>' . $temp['status'] . '</td>';
-                                                    echo '<td>' . $temp['Cby'] . '</td>';
-                                                    /*  echo  '<td><a href="index.php?forwardId='.$temp['cid'].'">Forward</a></td>';
-                                                    echo  '<td><a href="index.php?deleteId='.$temp['cid'].'">Delete </a></td><tr>'; */
-
-                                                  }
-                                                  echo '</table>';
-
-
-
-
-                                                } else {
-
-
-                                                  echo 'No Complaint is found ';
-                                                }
-
-                                              }
-
-
-
-                                              ?>
-
-
-
-
-
-                                              <!--ends here-->
-
-
-
-
-                                              <?php
-
-
-                                              if (isset($_GET['deleteId'])) {
-
-                                                $temp = "DELETE FROM `complaint` WHERE `cid` = '" . $_GET['deleteId'] . "'";
-                                                if ($conn->query($temp)) {
-
-                                                  echo '<h2 align="center">Complaint Deleted Succesully </h2>';
-                                                } else {
-
-                                                  echo '<h2 align ="center">Error While Deleting  </h2>';
-                                                }
-
-
-                                              }
-
-
-
-                                              if (isset($_GET['forwardId'])) {
-
-                                                show_forward_form();
-
-                                              }
-
-                                              //call Send Mail Function
-
-                                              if (isset($_GET['forwardd'])) {
-
-                                                // echo 'Send Mail is working Properly '; OK
-                                                $getEmail = $_GET['email'];
-                                                require 'sendMail/PHPMailerAutoload.php';
-                                                $mail = new PHPMailer;
-                                                $mail->isSMTP();
-                                                $mail->Host = 'smtp.gmail.com';
-                                                $mail->SMTPAuth = true;
-                                                $mail->Username = 'YOUR EMAIL ADDRESS HERE ';
-                                                $mail->Password = 'YOUR PASSSWORD HERE ';
-                                                $mail->SMTPSecure = 'ssl';
-                                                $mail->Port = 465;
-                                                $mail->addAddress($getEmail, 'SENDER NAME HERE ');
-                                                $mail->isHTML(true);
-                                                $mail->Subject = 'SOME TEXT HERE ';
-                                                $mail->Body = 'BODY HERE E';
-                                                $mail->AltBody = 'ALTERNATE TEXT HERE';
-                                                if (!$mail->send()) {
-                                                  echo 'Message could not be sent.';
-                                                  echo 'Mailer Error: ' . $mail->ErrorInfo;
-                                                } else {
-                                                  echo '<h1>Message has not been sent</h1>';
-                                                  header('Location:inedx.php?SendMailDone=yes');
-                                                }
-                                                //Send Mail Ends Here
-                                              }
-
-
-
-                                              if (isset($_GET['SendMailDone'])) {
-
-                                                if ($_GET['SendMailDone'] == 'yes') {
-
-                                                  echo '<div class="alert alert-success alert-dismissable">Forward mail Done SuccessFully </div>';
-                                                } else {
-
-                                                  echo '<div class="alert alert-danger alert-dismissable">Invalied Trial ...  </div>';
-                                                }
-
-                                              }
-                                              ?>
-                                            </div>
-
-                                          </div>
-
-                                        </div>
-                                      </div>
-
-                                    </div>
-
-
-                                  </div>
-                                </div>
-                              </div>
-                              <!-- Modal -->
-                              <div class="modal fade" id="myModala" role="dialog">
-                                <div class="modal-dialog">
-
-                                  <!-- Modal content-->
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                      <h3 align="center">Change Your Password !</h3>
-                                    </div>
-                                    <div class="modal-body">
-                                      <form action="../changepassnew.php" method="post">
-
-
-
-                                        <fieldset>
-                                          <!--<legend><span class="number">1</span>Your Basic Information</legend>-->
-                                          <!--<label for="userName">Index Number:</label>
-          <input type="text" id="userName" name="userName"class="form-control" required>-->
-                                          <label for="currentPassword">Old Password:</label>
-                                          <input type="password" id="currentPassword" name="currentPassword"
-                                            class="form-control" required>
-                                          <label for="newPassword">New Password:</label>
-                                          <input type="password" id="newPassword" name="newPassword" class="form-control">
-                                          <label for="confirmPassword">Confirm Password :</label>
-                                          <input type="password" id="confirmPassword" name="confirmPassword"
-                                            class="form-control" required>
-
-
-                                        </fieldset>
-
-                                        <button type="submit" name="submit" class="btn btn-danger">Change Your
-                                          Password</button>
-                                      </form>
-                                    </div>
-
-                                  </div>
-
-                                </div>
-                              </div>
-
-                              <!-- Modal -->
-                              <div class="modal fade" id="myModalc" id="create" role="dialog">
-                                <div class="modal-dialog">
-
-                                  <!-- Modal content-->
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                      <h3 align="center">Complaint Registration Form !</h3>
-                                    </div>
-                                    <div class="modal-body">
-                                      <form action="../createcomplaint.php" method="POST">
-
-
-
-                                        <fieldset>
-
-                                          <!-- <label for="rollno">Student ID:</label>
-          <input type="text" id="sid" name="sid"
-class="form-control" pattern="[a-zA-Z][0-9][0-9][0-9][0-9][0-9][0-9][a-zA-Z]{2}" required="">-->
-                                          <label for="Cby">Name:</label>
-                                          <input type="text" id="Cby" name="Cby" class="form-control" required="">
-                                          <label for="name">Email:</label>
-                                          <input type="email" id="email" name="email" class="form-control" required="">
-
-                                          <label for="type">Complaint Type:</label>
-                                          <select id="type" name="type" class="form-control" required="">
-
-                                            <option value="Hostel">Hostel</option>
-                                            <option value="Bullying">Bullying</option>
-                                            <option value="Harrassment">Harassment</option>
-                                            <option value="Academics">Academics</option>
-                                            <option value="Others">Others</option>
-                                          </select>
-
-                                          <!--<input type="date" id="date" name="date"
-class="form-control" required="">-->
-                                          <br>
-                                          <label for="description">Complaint Description:</label>
-                                          <textarea class="form-control" id="description" name="description" rows="5" style="width: 100%; resize: vertical;" placeholder="Please provide a detailed description of your complaint..." required></textarea>
-
-
-                                        </fieldset>
-                                        <br/>
-                                        <button type="submit" class="btn btn-danger">Complaint Now</button>
-                                      </form>
-                                    </div>
-
-                                  </div>
-
-                                </div>
-                              </div>
-
-
-
-                              <script src="assets/js/jquery-1.10.2.js"></script>
-                              <script src="assets/js/bootstrap.min.js"></script>
-                              <script src="assets/js/jquery.metisMenu.js"></script>
-
-
-
-
+                  // List All Complaints
+                  if (isset($_GET['listall'])) {
+                      $listAll = "SELECT * FROM complaint WHERE sid='$userMail' ORDER BY date DESC";
+                      $result = $conn->query($listAll);
+                      generateComplaintTable($result, "All Complaints");
+                  }
+
+                  // Approved Complaints
+                  if (isset($_GET['approvedall'])) {
+                      $approvedAll = "SELECT * FROM complaint WHERE sid='$userMail' AND status='approved' ORDER BY date DESC";
+                      $result = $conn->query($approvedAll);
+                      generateComplaintTable($result, "Approved Complaints");
+                  }
+
+                  // Pending Complaints
+                  if (isset($_GET['pendingall'])) {
+                      $pendingAll = "SELECT * FROM complaint WHERE sid='$userMail' AND status='pending' ORDER BY date DESC";
+                      $result = $conn->query($pendingAll);
+                      generateComplaintTable($result, "Pending Complaints");
+                  }
+                  ?>
+              </main>
+          </div>
+      </div>
+
+      <!-- Create Complaint Modal -->
+      <div class="modal fade" id="createComplaintModal" tabindex="-1" role="dialog" aria-labelledby="createComplaintModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="createComplaintModalLabel">Create New Complaint</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <form action="../createcomplaint.php" method="POST">
+                          <div class="form-group">
+                              <label for="Cby">Name:</label>
+                              <input type="text" class="form-control" id="Cby" name="Cby" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="email">Email:</label>
+                              <input type="email" class="form-control" id="email" name="email" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="type">Complaint Type:</label>
+                              <select class="form-control" id="type" name="type" required>
+                                  <option value="Hostel">Hostel</option>
+                                  <option value="Bullying">Bullying</option>
+                                  <option value="Harrassment">Harassment</option>
+                                  <option value="Academics">Academics</option>
+                                  <option value="Others">Others</option>
+                              </select>
+                          </div>
+                          <div class="form-group">
+                              <label for="description">Complaint Description:</label>
+                              <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                          </div>
+                          <button type="submit" class="btn btn-primary">Submit Complaint</button>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Change Password Modal -->
+      <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <form action="../changepassnew.php" method="post">
+                          <div class="form-group">
+                              <label for="currentPassword">Current Password:</label>
+                              <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="newPassword">New Password:</label>
+                              <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="confirmPassword">Confirm New Password:</label>
+                              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                          </div>
+                          <button type="submit" name="submit" class="btn btn-primary">Change Password</button>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="modal fade" id="complaintDetailsModal" tabindex="-1" role="dialog" aria-labelledby="complaintDetailsModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="complaintDetailsModalLabel">Complaint Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body" id="complaintDetailsBody">
+                      <!-- Complaint details will be loaded here -->
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      <script>
+          $(document).ready(function() {
+              $('.view-complaint').click(function() {
+                  var cid = $(this).data('cid');
+                  $.ajax({
+                      url: 'get_student_complaint_details.php',
+                      type: 'GET',
+                      data: { cid: cid },
+                      success: function(response) {
+                          $('#complaintDetailsBody').html(response);
+                          $('#complaintDetailsModal').modal('show');
+                      },
+                      error: function() {
+                          alert('Error fetching complaint details.');
+                      }
+                  });
+              });
+          });
+      </script>
   </body>
-  <?php
-}
-?>
-
-</html>
+  </html>
