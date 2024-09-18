@@ -159,7 +159,7 @@ $userMail = $_SESSION['userMail'];
                                               <thead>
                                                   <tr>
                                                       <th>CID</th>
-                                                      <th>Description</th>
+                                                      <th>Complaint Description</th>
                                                       <th>Type</th>
                                                       <th>Status</th>
                                                       <th>Date</th>
