@@ -39,6 +39,10 @@ function show_forward_form(){
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -84,6 +88,12 @@ function show_forward_form(){
         .btn-action {
             padding: 0.25rem 0.5rem;
             font-size: 0.875rem;
+        }
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+        .modal-content {
+            z-index: 1100 !important;
         }
     </style>
 </head>
@@ -158,7 +168,7 @@ function show_forward_form(){
                                                     <thead class="thead-light">
                                                         <tr>
                                                             <th>CID</th>
-                                                            <th>Description</th>
+                                                            <th>Complaint Description</th>
                                                             <th>Type</th>
                                                             <th>Student</th>
                                                             <th>Status</th>
@@ -243,7 +253,7 @@ function show_forward_form(){
                                                         <tr>
                                                             <th>FID</th>
                                                             <th>Student</th>
-                                                            <th>Description</th>
+                                                            <th>Feedback Description</th>
                                                             <th>Actions</th>
                                                         </tr>
                                                     </thead>
@@ -646,26 +656,31 @@ function show_forward_form(){
           </div>
       </div>
 
-  <!-- Feedback Details Modal -->
-  <div class="modal fade" id="feedbackDetailsModal" tabindex="-1" role="dialog" aria-labelledby="feedbackDetailsModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="feedbackDetailsModalLabel">Feedback Details</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                  </button>
-              </div>
-              <div class="modal-body" id="feedbackDetailsBody">
-                  <!-- Feedback details will be loaded here -->
+      <!-- Feedback Details Modal -->
+      <div class="modal fade" id="feedbackDetailsModal" tabindex="-1" role="dialog" aria-labelledby="feedbackDetailsModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="feedbackDetailsModalLabel">Feedback Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body" id="feedbackDetailsBody">
+                      <!-- Feedback details will be loaded here -->
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
               </div>
           </div>
       </div>
-  </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+      <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
   <script>
   $(document).ready(function() {
       // View complaint details
@@ -688,28 +703,63 @@ function show_forward_form(){
       // Reply to complaint
       $(document).on('click', '.reply', function() {
           var email = $(this).data('email');
-          var cid = $(this).closest('tr').find('td:first').text(); // Get the complaint ID
+          var cid = $(this).closest('tr').find('td:first').text();
           $('#replyEmail').val(email);
           $('#replyCid').val(cid);
           $('#replyModal').modal('show');
       });
 
       // View feedback details
-      $(document).on('click', '.view-feedback', function() {
+      // Manual trigger for testing
+      $('body').append('<button id="testFeedbackModal" class="btn btn-primary mt-3">Test Feedback Modal</button>');
+
+      $('#testFeedbackModal').on('click', function() {
+          console.log('Test button clicked');
+          $('#feedbackDetailsBody').html('This is a test message.');
+          $('#feedbackDetailsModal').modal('show');
+      });
+
+      // View feedback details
+      $(document).on('click', '.view-feedback', function(e) {
+          e.preventDefault();
+          console.log('View feedback clicked');
           var fid = $(this).data('fid');
+          console.log('FID:', fid);
+
+          // Immediate modal show for testing
+          $('#feedbackDetailsBody').html('Loading feedback details...');
+          // $('#feedbackDetailsModal').modal('show');
+          $('#feedbackDetailsModal').modal({
+              show: true,
+              backdrop: 'static',
+              keyboard: false
+          });
+
           $.ajax({
               url: 'get_feedback_details.php',
               type: 'GET',
               data: { fid: fid },
               success: function(response) {
+                  console.log('AJAX Success');
                   $('#feedbackDetailsBody').html(response);
-                  $('#feedbackDetailsModal').modal('show');
               },
-              error: function() {
-                  alert('Error fetching feedback details.');
+              error: function(xhr, status, error) {
+                  console.error("AJAX Error: " + status + "\nError: " + error);
+                  console.log(xhr.responseText);
+                  $('#feedbackDetailsBody').html('Error loading feedback details.');
               }
           });
       });
+
+      // Modal event listeners for debugging
+      $('#feedbackDetailsModal').on('show.bs.modal', function () {
+          console.log('Modal show event triggered');
+      });
+
+      $('#feedbackDetailsModal').on('shown.bs.modal', function () {
+          console.log('Modal shown event triggered');
+      });
+
 
       // Submit reply form
       $('#replyForm').submit(function(e) {
@@ -732,6 +782,12 @@ function show_forward_form(){
               }
           });
       });
+
+      // $('#feedbackDetailsModal').modal({
+      //     show: true,
+      //     backdrop: 'static',
+      //     keyboard: false
+      // });
   });
   </script>
 

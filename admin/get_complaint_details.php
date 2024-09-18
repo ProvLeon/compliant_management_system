@@ -24,7 +24,7 @@ if(isset($_GET['cid'])) {
         // Student Information
         echo '<div class="complaint-section">';
         echo '<h3>Student Information</h3>';
-        echo '<p><strong>Name:</strong> '.htmlspecialchars($complaint['student_name']).'</p>';
+        echo '<p><strong>Name:</strong> '.htmlspecialchars($complaint['Cby']).'</p>';
         echo '<p><strong>Student ID:</strong> '.htmlspecialchars($complaint['sid']).'</p>';
         echo '<p><strong>Email:</strong> '.htmlspecialchars($complaint['SEmail']).'</p>';
         echo '</div>';
