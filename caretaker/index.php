@@ -179,7 +179,7 @@ function show_forward_form(){
                                             <thead>
                                                 <tr>
                                                     <th>CID</th>
-                                                    <th>Description</th>
+                                                    <th>Complaint Description</th>
                                                     <th>Type</th>
                                                     <th>Student</th>
                                                     <th>Status</th>
@@ -255,7 +255,7 @@ function show_forward_form(){
                                                 <tr>
                                                     <th>FID</th>
                                                     <th>Student</th>
-                                                    <th>Description</th>
+                                                    <th>Feedback Description</th>
                                                     <th>Email</th>
                                                 </tr>
                                             </thead>
