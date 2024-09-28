@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize inputs
     $rollno = htmlspecialchars(trim($_POST['rollno']), ENT_QUOTES, 'UTF-8');
     $name = htmlspecialchars(trim($_POST['name']), ENT_QUOTES, 'UTF-8');
-    $password = $_POST['password']; // Password is not hashed
+    $password = $_POST['password'];
     $cpassword = $_POST['cpassword'];
     $contact = htmlspecialchars(trim($_POST['contact']), ENT_QUOTES, 'UTF-8');
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);

@@ -95,6 +95,73 @@ function show_forward_form(){
         .modal-content {
             z-index: 1100 !important;
         }
+
+        .complaint-card {
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                margin: 20px auto;
+                max-width: 700px;
+                padding: 30px;
+                font-family: Arial, sans-serif;
+            }
+            .complaint-header {
+                border-bottom: 2px solid #f0f0f0;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            .complaint-title {
+                color: #333;
+                font-size: 24px;
+                margin: 0 0 10px;
+            }
+            .complaint-date {
+                color: #777;
+                font-size: 14px;
+            }
+            .complaint-content {
+                margin-bottom: 25px;
+            }
+            .complaint-section {
+                margin-bottom: 25px;
+            }
+            .complaint-section h3 {
+                color: #444;
+                font-size: 18px;
+                margin-bottom: 15px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid #eee;
+            }
+            .complaint-section p {
+                margin: 10px 0;
+                line-height: 1.6;
+            }
+            .complaint-description {
+                background-color: #f9f9f9;
+                border-left: 4px solid #1a73e8;
+                padding: 15px;
+                margin-top: 10px;
+                border-radius: 4px;
+                font-style: italic;
+            }
+            .complaint-footer {
+                border-top: 2px solid #f0f0f0;
+                padding-top: 20px;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+            .status-badge {
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .status-pending { background-color: #fef3cd; color: #856404; }
+            .status-approved { background-color: #d4edda; color: #155724; }
+            .status-discard { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
@@ -615,22 +682,7 @@ function show_forward_form(){
     </div>
   </div>
 
-  <!-- Complaint Details Modal -->
-  <div class="modal fade" id="complaintDetailsModal" tabindex="-1" role="dialog" aria-labelledby="complaintDetailsModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="complaintDetailsModalLabel">Complaint Details</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                  </button>
-              </div>
-              <div class="modal-body" id="complaintDetailsBody">
-                  <!-- Complaint details will be loaded here -->
-              </div>
-          </div>
-      </div>
-  </div>
+
 
   <!-- Reply Modal -->
   <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
@@ -655,6 +707,7 @@ function show_forward_form(){
               </div>
           </div>
       </div>
+  </div>
 
       <!-- Feedback Details Modal -->
       <div class="modal fade" id="feedbackDetailsModal" tabindex="-1" role="dialog" aria-labelledby="feedbackDetailsModalLabel" aria-hidden="true">
@@ -676,120 +729,155 @@ function show_forward_form(){
           </div>
       </div>
 
+      <!-- Complaint Details Modal -->
+      <div class="modal fade" id="complaintDetailsModal" tabindex="-1" role="dialog" aria-labelledby="complaintDetailsModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="complaintDetailsModalLabel">Complaint Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body" id="complaintDetailsBody">
+                      <!-- Complaint details will be loaded here -->
+                  </div>
+              </div>
+          </div>
+      </div>
 
       <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  <script>
-  $(document).ready(function() {
-      // View complaint details
-      $(document).on('click', '.view-details', function() {
-          var cid = $(this).data('cid');
-          $.ajax({
-              url: 'get_complaint_details.php',
-              type: 'GET',
-              data: { cid: cid },
-              success: function(response) {
-                  $('#complaintDetailsBody').html(response);
-                  $('#complaintDetailsModal').modal('show');
-              },
-              error: function() {
-                  alert('Error fetching complaint details.');
-              }
-          });
-      });
+      <script>
+      $(document).ready(function() {
 
-      // Reply to complaint
-      $(document).on('click', '.reply', function() {
-          var email = $(this).data('email');
-          var cid = $(this).closest('tr').find('td:first').text();
-          $('#replyEmail').val(email);
-          $('#replyCid').val(cid);
-          $('#replyModal').modal('show');
-      });
+        // Handle delete button click in complaint details modal
+            $(document).on('click', '#complaintDetailsModal .delete-btn', function() {
+                var cid = $(this).data('cid');
+                if (confirm('Are you sure you want to delete this complaint?')) {
+                    $.ajax({
+                        url: 'delete_complaint.php',
+                        type: 'POST',
+                        data: { deleteId: cid },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Complaint deleted successfully!');
+                                $('#complaintDetailsModal').modal('hide');
+                                // Reload the page or update the complaint list
+                                location.reload();
+                            } else {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('An error occurred while deleting the complaint.');
+                        }
+                    });
+                }
+            });
 
-      // View feedback details
-      // Manual trigger for testing
-      $('body').append('<button id="testFeedbackModal" class="btn btn-primary mt-3">Test Feedback Modal</button>');
+          // Use event delegation for dynamically added elements
+          $(document).on('click', '.view-details', function() {
+                 var cid = $(this).data('cid');
+                 $.ajax({
+                     url: 'get_complaint_details.php',
+                     type: 'GET',
+                     data: { cid: cid },
+                     success: function(response) {
+                         $('#complaintDetailsBody').html(response);
+                         $('#complaintDetailsModal').modal('show');
 
-      $('#testFeedbackModal').on('click', function() {
-          console.log('Test button clicked');
-          $('#feedbackDetailsBody').html('This is a test message.');
-          $('#feedbackDetailsModal').modal('show');
-      });
+                         // Ensure the reply button in the modal works
+                         $('#complaintDetailsModal .reply-btn').on('click', function() {
+                             var email = $(this).data('email');
+                             var cid = $(this).data('cid');
+                             $('#replyEmail').val(email);
+                             $('#replyCid').val(cid);
+                             $('#complaintDetailsModal').modal('hide');
+                             $('#replyModal').modal('show');
+                         });
+                     },
+                     error: function() {
+                         alert('Error fetching complaint details.');
+                     }
+                 });
+             });
 
-      // View feedback details
-      $(document).on('click', '.view-feedback', function(e) {
-          e.preventDefault();
-          console.log('View feedback clicked');
-          var fid = $(this).data('fid');
-          console.log('FID:', fid);
+          // Handle reply button clicks (both in table and complaint details modal)
+              $(document).on('click', '.reply, .reply-btn', function() {
+                  var email = $(this).data('email');
+                  var cid = $(this).data('cid');
+                  $('#replyEmail').val(email);
+                  $('#replyCid').val(cid);
+                  $('#complaintDetailsModal').modal('hide');
+                  setTimeout(function() {
+                      $('#replyModal').modal('show');
+                  }, 500);
+              });
 
-          // Immediate modal show for testing
-          $('#feedbackDetailsBody').html('Loading feedback details...');
-          // $('#feedbackDetailsModal').modal('show');
-          $('#feedbackDetailsModal').modal({
-              show: true,
-              backdrop: 'static',
-              keyboard: false
-          });
+          // View feedback details
+          $(document).on('click', '.view-feedback', function(e) {
+              e.preventDefault();
+              var fid = $(this).data('fid');
 
-          $.ajax({
-              url: 'get_feedback_details.php',
-              type: 'GET',
-              data: { fid: fid },
-              success: function(response) {
-                  console.log('AJAX Success');
-                  $('#feedbackDetailsBody').html(response);
-              },
-              error: function(xhr, status, error) {
-                  console.error("AJAX Error: " + status + "\nError: " + error);
-                  console.log(xhr.responseText);
-                  $('#feedbackDetailsBody').html('Error loading feedback details.');
-              }
-          });
-      });
+              $('#feedbackDetailsBody').html('Loading feedback details...');
+              $('#feedbackDetailsModal').modal('show');
 
-      // Modal event listeners for debugging
-      $('#feedbackDetailsModal').on('show.bs.modal', function () {
-          console.log('Modal show event triggered');
-      });
-
-      $('#feedbackDetailsModal').on('shown.bs.modal', function () {
-          console.log('Modal shown event triggered');
-      });
-
-
-      // Submit reply form
-      $('#replyForm').submit(function(e) {
-          e.preventDefault();
-          $.ajax({
-              url: 'send_reply.php',
-              type: 'POST',
-              data: $(this).serialize(),
-              dataType: 'json',
-              success: function(response) {
-                  if (response.success) {
-                      alert(response.message);
-                      $('#replyModal').modal('hide');
-                  } else {
-                      alert('Error: ' + response.message);
+              $.ajax({
+                  url: 'get_feedback_details.php',
+                  type: 'GET',
+                  data: { fid: fid },
+                  success: function(response) {
+                      $('#feedbackDetailsBody').html(response);
+                  },
+                  error: function(xhr, status, error) {
+                      console.error("AJAX Error: " + status + "\nError: " + error);
+                      $('#feedbackDetailsBody').html('Error loading feedback details.');
                   }
-              },
-              error: function() {
-                  alert('An error occurred while sending the reply.');
-              }
+              });
           });
-      });
 
-      // $('#feedbackDetailsModal').modal({
-      //     show: true,
-      //     backdrop: 'static',
-      //     keyboard: false
-      // });
-  });
-  </script>
+          // Submit reply form
+          $(document).on('submit', '#replyForm', function(e) {
+              e.preventDefault();
+              $.ajax({
+                  url: 'send_reply.php',
+                  type: 'POST',
+                  data: $(this).serialize(),
+                  dataType: 'json',
+                  success: function(response) {
+                      if (response.success) {
+                          alert(response.message);
+                          $('#replyModal').modal('hide');
+                      } else {
+                          alert('Error: ' + response.message);
+                      }
+                  },
+                  error: function() {
+                      alert('An error occurred while sending the reply.');
+                  }
+              });
+          });
+
+          // Ensure reply functionality works in complaint details modal
+              $('#complaintDetailsModal').on('shown.bs.modal', function () {
+                  $(this).find('.reply-btn').on('click', function() {
+                      var email = $(this).data('email');
+                      var cid = $(this).data('cid');
+                      $('#replyEmail').val(email);
+                      $('#replyCid').val(cid);
+                      $('#complaintDetailsModal').modal('hide');
+                      setTimeout(function() {
+                          $('#replyModal').modal('show');
+                      }, 500);
+                  });
+              });
+      });
+      </script>
+
 
 </body>
 </html>

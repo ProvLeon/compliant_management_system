@@ -42,7 +42,7 @@ if(isset($_GET['cid'])) {
 
         // Footer with actions
         echo '<div class="complaint-footer">';
-        echo '<button class="btn btn-primary reply-btn" data-toggle="modal" data-target="#replyModal" data-email="'.htmlspecialchars($complaint['SEmail']).'" data-cid="'.htmlspecialchars($complaint['cid']).'">Reply</button>';
+        echo '<button class="btn btn-primary reply-btn" data-email="'.htmlspecialchars($complaint['SEmail']).'" data-cid="'.htmlspecialchars($complaint['cid']).'">Reply</button>';
         echo '<button class="btn btn-danger delete-btn" data-cid="'.htmlspecialchars($complaint['cid']).'">Delete</button>';
         echo '</div>';
 
@@ -72,137 +72,6 @@ if(isset($_GET['cid'])) {
                 </div>
             </div>
         </div>';
-        // CSS for styling
-        echo '<style>
-            .complaint-card {
-                background-color: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                margin: 20px auto;
-                max-width: 700px;
-                padding: 30px;
-                font-family: Arial, sans-serif;
-            }
-            .complaint-header {
-                border-bottom: 2px solid #f0f0f0;
-                margin-bottom: 20px;
-                padding-bottom: 15px;
-            }
-            .complaint-title {
-                color: #333;
-                font-size: 24px;
-                margin: 0 0 10px;
-            }
-            .complaint-date {
-                color: #777;
-                font-size: 14px;
-            }
-            .complaint-content {
-                margin-bottom: 25px;
-            }
-            .complaint-section {
-                margin-bottom: 25px;
-            }
-            .complaint-section h3 {
-                color: #444;
-                font-size: 18px;
-                margin-bottom: 15px;
-                padding-bottom: 8px;
-                border-bottom: 1px solid #eee;
-            }
-            .complaint-section p {
-                margin: 10px 0;
-                line-height: 1.6;
-            }
-            .complaint-description {
-                background-color: #f9f9f9;
-                border-left: 4px solid #1a73e8;
-                padding: 15px;
-                margin-top: 10px;
-                border-radius: 4px;
-                font-style: italic;
-            }
-            .complaint-footer {
-                border-top: 2px solid #f0f0f0;
-                padding-top: 20px;
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
-            }
-            .btn {
-                padding: 10px 20px;
-                border-radius: 4px;
-                font-size: 14px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-            .btn-primary {
-                background-color: #1a73e8;
-                color: white;
-                border: none;
-            }
-            .btn-danger {
-                background-color: #ea4335;
-                color: white;
-                border: none;
-            }
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            }
-            .status-badge {
-                display: inline-block;
-                padding: 5px 10px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: bold;
-                text-transform: uppercase;
-            }
-            .status-pending { background-color: #fef3cd; color: #856404; }
-            .status-approved { background-color: #d4edda; color: #155724; }
-            .status-discard { background-color: #f8d7da; color: #721c24; }
-
-            .modal-content {
-                border-radius: 8px;
-            }
-            .modal-header {
-                background-color: #f8f9fa;
-                border-bottom: 1px solid #e9ecef;
-            }
-            .modal-title {
-                color: #333;
-            }
-            #replyMessage {
-                resize: vertical;
-            }
-        </style>';
-
-        // JavaScript for handling the reply
-        echo '<script>
-        $(document).ready(function() {
-            $("#replyForm").on("submit", function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "send_reply.php",
-                    type: "POST",
-                    data: $(this).serialize(),
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.success) {
-                            alert("Reply sent successfully!");
-                            $("#replyModal").modal("hide");
-                        } else {
-                            alert("Error: " + response.message);
-                        }
-                    },
-                    error: function() {
-                        alert("An error occurred while sending the reply.");
-                    }
-                });
-            });
-        });
-        </script>';
 
     } else {
         echo '<div class="alert alert-warning">Complaint not found</div>';
