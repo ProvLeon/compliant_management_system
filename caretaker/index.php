@@ -529,6 +529,32 @@ function generateFeedbackTable($result) {
                     });
                 });
 
+              // Handle delete button click in complaint details modal
+                  $(document).on('click', '#complaintDetailsModal .delete-btn', function() {
+                      var cid = $(this).data('cid');
+                      if (confirm('Are you sure you want to delete this complaint?')) {
+                          $.ajax({
+                              url: 'delete_complaint.php',
+                              type: 'POST',
+                              data: { deleteId: cid },
+                              dataType: 'json',
+                              success: function(response) {
+                                  if (response.success) {
+                                      alert('Complaint deleted successfully!');
+                                      $('#complaintDetailsModal').modal('hide');
+                                      // Reload the page or update the complaint list
+                                      location.reload();
+                                  } else {
+                                      alert('Error: ' + response.message);
+                                  }
+                              },
+                              error: function() {
+                                  alert('An error occurred while deleting the complaint.');
+                              }
+                          });
+                      }
+                  });
+
               $('.view-feedback').click(function() {
                     var fid = $(this).data('fid');
                     $.ajax({
