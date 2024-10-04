@@ -450,22 +450,6 @@ function generateFeedbackTable($result) {
         </div>
     </div>
 
-    <!-- Complaint Details Modal -->
-    <div class="modal fade" id="complaintDetailsModal" tabindex="-1" role="dialog" aria-labelledby="complaintDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="complaintDetailsModalLabel">Complaint Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="complaintDetailsContent">
-                    <!-- Complaint details will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Reply Modal -->
     <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
@@ -492,6 +476,23 @@ function generateFeedbackTable($result) {
         </div>
     </div>
 
+    <!-- Complaint Details Modal -->
+    <div class="modal fade" id="complaintDetailsModal" tabindex="-1" role="dialog" aria-labelledby="complaintDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="complaintDetailsModalLabel">Complaint Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="complaintDetailsContent">
+                    <!-- Complaint details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="feedbackDetailsModal" tabindex="-1" role="dialog" aria-labelledby="feedbackDetailsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -512,7 +513,17 @@ function generateFeedbackTable($result) {
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script>
-            $(document).ready(function() {
+          $(document).ready(function() {
+
+              $('.reply-complaint').click(function() {
+                  var email = $(this).data('email');
+                  var cid = $(this).closest('tr').find('td:first').text();
+                  $('#replyEmail').val(email);
+                  $('#replyCid').val(cid);
+                  $('#replyModal').modal('show');
+              });
+
+
               $('.view-complaint').click(function() {
                     var cid = $(this).data('cid');
                     $.ajax({
@@ -571,13 +582,6 @@ function generateFeedbackTable($result) {
                     });
                 });
 
-                $('.reply-complaint').click(function() {
-                    var email = $(this).data('email');
-                    var cid = $(this).closest('tr').find('td:first').text();
-                    $('#replyEmail').val(email);
-                    $('#replyCid').val(cid);
-                    $('#replyModal').modal('show');
-                });
 
                 $('#replyForm').submit(function(e) {
                     e.preventDefault();
