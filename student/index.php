@@ -86,14 +86,16 @@ $userMail = $_SESSION['userMail'];
               font-size: 0.875rem;
           }
           .status-badge {
-              padding: 0.25em 0.6em;
-              font-size: 75%;
-              font-weight: 700;
-              border-radius: 0.25rem;
+              display: inline-block;
+              padding: 5px 10px;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: bold;
+              text-transform: uppercase;
           }
-          .status-pending { background-color: #ffc107; color: #212529; }
-          .status-approved { background-color: #28a745; color: #fff; }
-          .status-discarded { background-color: #dc3545; color: #fff; }
+          .status-pending { background-color: #fef3cd; color: #856404; }
+          .status-approved { background-color: #d4edda; color: #155724; }
+          .status-discard { background-color: #f8d7da; color: #721c24; }
       </style>
   </head>
   <body>

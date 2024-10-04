@@ -25,22 +25,88 @@ if ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-function show_forward_form(){
-    echo '<form action="index.php" method="GET" >
-                <table class="table">
-                    <tr>
-                      <td>Forward To </td>
-                      <td><input class="form-control" type="text" name="email" placeholder="Enter Email Address to forward to "></td>
-                    </tr>
-
-                     <tr>
-                      <td ></td>
-                      <td><button type="submit" class="btn btn-danger"  name="forwardd" >Forward Now </button></td>
-                    </tr>
-              </table>
-          <form>';
-
+// Function to generate complaint table
+function generateComplaintTable($result, $title) {
+    if ($result->num_rows > 0) {
+        echo '<div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">' . $title . '</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>CID</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>Student</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>';
+        while ($row = $result->fetch_assoc()) {
+            $shortDescription = mb_strlen($row['description']) > 50 ? mb_substr($row['description'], 0, 47) . '...' : $row['description'];
+            echo '<tr>
+                    <td>' . $row['cid'] . '</td>
+                    <td>' . htmlspecialchars($shortDescription) . '</td>
+                    <td>' . $row['type'] . '</td>
+                    <td>' . $row['Cby'] . ' (ID: ' . $row['sid'] . ')</td>
+                    <td><span class="status-badge status-' . strtolower($row['status']) . '">' . $row['status'] . '</span></td>
+                    <td>' . date('Y-m-d', strtotime($row['date'])) . '</td>
+                    <td>
+                        <button class="btn btn-sm btn-info btn-action view-complaint" data-cid="' . $row['cid'] . '">View</button>
+                        <button class="btn btn-sm btn-primary btn-action reply-complaint" data-email="' . $row['SEmail'] . '">Reply</button>
+                    </td>
+                  </tr>';
+        }
+        echo '</tbody></table></div></div></div>';
+    } else {
+        echo '<div class="alert alert-info">No complaints found.</div>';
+    }
 }
+
+// Function to generate feedback table
+function generateFeedbackTable($result) {
+    if ($result->num_rows > 0) {
+        echo '<div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">All Feedbacks</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>FID</th>
+                                    <th>Student</th>
+                                    <th>Feedback Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>';
+        while ($row = $result->fetch_assoc()) {
+            $shortDescription = mb_strlen($row['description']) > 50 ? mb_substr($row['description'], 0, 47) . '...' : $row['description'];
+            echo '<tr>
+                    <td>' . $row['fid'] . '</td>
+                    <td>
+                        <div>' . $row['name'] . '</div>
+                        <small class="text-muted">' . $row['email'] . '</small>
+                    </td>
+                    <td>' . htmlspecialchars($shortDescription) . '</td>
+                    <td>
+                        <button class="btn btn-sm btn-info view-feedback" data-fid="' . $row['fid'] . '">View</button>
+                    </td>
+                  </tr>';
+        }
+        echo '</tbody></table></div></div></div>';
+    } else {
+        echo '<div class="alert alert-info">No feedbacks found.</div>';
+    }
+}
+
 
 ?>
 
@@ -106,10 +172,129 @@ function show_forward_form(){
             font-weight: 700;
             border-radius: 0.25rem;
         }
-        .status-pending { background-color: #ffc107; color: #212529; }
+        /* .status-pending { background-color: #ffc107; color: #212529; }
         .status-approved { background-color: #28a745; color: #fff; }
-        .status-discard { background-color: #dc3545; color: #fff; }
-    </style>
+        .status-discard { background-color: #dc3545; color: #fff; } */
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }
+        /* .modal-body {
+            padding: 20px;
+        } */
+        .feedback-card {
+                    background-color: #fff;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    margin: 20px auto;
+                    max-width: 700px;
+                    padding: 30px;
+                    font-family: Arial, sans-serif;
+                }
+                .feedback-header {
+                    border-bottom: 2px solid #f0f0f0;
+                    margin-bottom: 20px;
+                    padding-bottom: 15px;
+                }
+                .feedback-title {
+                    color: #333;
+                    font-size: 24px;
+                    margin: 0 0 10px;
+                }
+                .feedback-content {
+                    margin-bottom: 25px;
+                }
+                .feedback-section {
+                    margin-bottom: 25px;
+                }
+                .feedback-section h3 {
+                    color: #444;
+                    font-size: 18px;
+                    margin-bottom: 15px;
+                    padding-bottom: 8px;
+                    border-bottom: 1px solid #eee;
+                }
+                .feedback-section p {
+                    margin: 10px 0;
+                    line-height: 1.6;
+                }
+                .feedback-description {
+                    background-color: #f9f9f9;
+                    border-left: 4px solid #1a73e8;
+                    padding: 15px;
+                    margin-top: 10px;
+                    border-radius: 4px;
+                    font-style: italic;
+                }
+
+
+                .complaint-card {
+                        background-color: #fff;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        margin: 20px auto;
+                        max-width: 700px;
+                        padding: 30px;
+                        font-family: Arial, sans-serif;
+                    }
+                    .complaint-header {
+                        border-bottom: 2px solid #f0f0f0;
+                        margin-bottom: 20px;
+                        padding-bottom: 15px;
+                    }
+                    .complaint-title {
+                        color: #333;
+                        font-size: 24px;
+                        margin: 0 0 10px;
+                    }
+                    .complaint-date {
+                        color: #777;
+                        font-size: 14px;
+                    }
+                    .complaint-content {
+                        margin-bottom: 25px;
+                    }
+                    .complaint-section {
+                        margin-bottom: 25px;
+                    }
+                    .complaint-section h3 {
+                        color: #444;
+                        font-size: 18px;
+                        margin-bottom: 15px;
+                        padding-bottom: 8px;
+                        border-bottom: 1px solid #eee;
+                    }
+                    .complaint-section p {
+                        margin: 10px 0;
+                        line-height: 1.6;
+                    }
+                    .complaint-description {
+                        background-color: #f9f9f9;
+                        border-left: 4px solid #1a73e8;
+                        padding: 15px;
+                        margin-top: 10px;
+                        border-radius: 4px;
+                        font-style: italic;
+                    }
+                    .complaint-footer {
+                        border-top: 2px solid #f0f0f0;
+                        padding-top: 20px;
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 10px;
+                    }
+                    .status-badge {
+                        display: inline-block;
+                        padding: 5px 10px;
+                        border-radius: 20px;
+                        font-size: 12px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                    }
+                    .status-pending { background-color: #fef3cd; color: #856404; }
+                    .status-approved { background-color: #d4edda; color: #155724; }
+                    .status-discard { background-color: #f8d7da; color: #721c24; }
+            </style>
 </head>
 <body>
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0">
@@ -161,121 +346,49 @@ function show_forward_form(){
             </nav>
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 content">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Dashboard</h1>
-                </div>
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Dashboard</h1>
+                    </div>
 
-                <?php
-                // Function to generate complaint table
-                function generateComplaintTable($result, $title) {
-                    if ($result->num_rows > 0) {
-                        echo '<div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">' . $title . '</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>CID</th>
-                                                    <th>Complaint Description</th>
-                                                    <th>Type</th>
-                                                    <th>Student</th>
-                                                    <th>Status</th>
-                                                    <th>Date</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>';
-                        while ($row = $result->fetch_assoc()) {
-                            $shortDescription = mb_strlen($row['description']) > 50 ? mb_substr($row['description'], 0, 47) . '...' : $row['description'];
-                            echo '<tr>
-                                    <td>' . $row['cid'] . '</td>
-                                    <td>' . htmlspecialchars($shortDescription) . '</td>
-                                    <td>' . $row['type'] . '</td>
-                                    <td>' . $row['Cby'] . ' (ID: ' . $row['sid'] . ')</td>
-                                    <td><span class="status-badge status-' . strtolower($row['status']) . '">' . $row['status'] . '</span></td>
-                                    <td>' . date('Y-m-d', strtotime($row['date'])) . '</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info btn-action view-complaint" data-cid="' . $row['cid'] . '">View</button>
-                                        <button class="btn btn-sm btn-primary btn-action reply-complaint" data-email="' . $row['SEmail'] . '">Reply</button>
-                                    </td>
-                                  </tr>';
-                        }
-                        echo '</tbody></table></div></div></div>';
-                    } else {
-                        echo '<div class="alert alert-info">No complaints found.</div>';
+                    <?php
+                    // List All Complaints
+                    if (isset($_GET['listall'])) {
+                        $listAll = "SELECT * FROM `complaint` WHERE type=? ORDER BY date DESC";
+                        $stmt = $conn->prepare($listAll);
+                        $stmt->bind_param("s", $_SESSION['ajay']);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        generateComplaintTable($result, "All Complaints");
                     }
-                }
 
-                // List All Complaints
-                if (isset($_GET['listall'])) {
-                    $listAll = "SELECT * FROM `complaint` WHERE type=? ORDER BY date DESC";
-                    $stmt = $conn->prepare($listAll);
-                    $stmt->bind_param("s", $_SESSION['ajay']);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    generateComplaintTable($result, "All Complaints");
-                }
-
-                // Approved Complaints
-                if (isset($_GET['approvedall'])) {
-                    $approvedAll = "SELECT * FROM `complaint` WHERE type=? AND status='approved' ORDER BY date DESC";
-                    $stmt = $conn->prepare($approvedAll);
-                    $stmt->bind_param("s", $_SESSION['ajay']);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    generateComplaintTable($result, "Approved Complaints");
-                }
-
-                // Pending Complaints
-                if (isset($_GET['pendingall'])) {
-                    $pendingAll = "SELECT * FROM `complaint` WHERE type=? AND status='pending' ORDER BY date DESC";
-                    $stmt = $conn->prepare($pendingAll);
-                    $stmt->bind_param("s", $_SESSION['ajay']);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    generateComplaintTable($result, "Pending Complaints");
-                }
-
-                // Feedbacks
-                if (isset($_GET['feedbackall'])) {
-                    $feedbackAll = "SELECT * FROM `feedback` ORDER BY fid DESC";
-                    $result = $conn->query($feedbackAll);
-                    if ($result->num_rows > 0) {
-                        echo '<div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">All Feedbacks</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>FID</th>
-                                                    <th>Student</th>
-                                                    <th>Feedback Description</th>
-                                                    <th>Email</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>';
-                        while ($row = $result->fetch_assoc()) {
-                            $shortDescription = mb_strlen($row['description']) > 50 ? mb_substr($row['description'], 0, 47) . '...' : $row['description'];
-                            echo '<tr>
-                                    <td>' . $row['fid'] . '</td>
-                                    <td>' . $row['name'] . ' (ID: ' . $row['sid'] . ')</td>
-                                    <td>' . htmlspecialchars($shortDescription) . '</td>
-                                    <td>' . $row['email'] . '</td>
-                                  </tr>';
-                        }
-                        echo '</tbody></table></div></div></div>';
-                    } else {
-                        echo '<div class="alert alert-info">No feedbacks found.</div>';
+                    // Approved Complaints
+                    if (isset($_GET['approvedall'])) {
+                        $approvedAll = "SELECT * FROM `complaint` WHERE type=? AND status='approved' ORDER BY date DESC";
+                        $stmt = $conn->prepare($approvedAll);
+                        $stmt->bind_param("s", $_SESSION['ajay']);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        generateComplaintTable($result, "Approved Complaints");
                     }
-                }
-                ?>
-            </main>
+
+                    // Pending Complaints
+                    if (isset($_GET['pendingall'])) {
+                        $pendingAll = "SELECT * FROM `complaint` WHERE type=? AND status='pending' ORDER BY date DESC";
+                        $stmt = $conn->prepare($pendingAll);
+                        $stmt->bind_param("s", $_SESSION['ajay']);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        generateComplaintTable($result, "Pending Complaints");
+                    }
+
+                    // Feedbacks
+                    if (isset($_GET['feedbackall'])) {
+                        $feedbackAll = "SELECT * FROM `feedback` ORDER BY fid DESC";
+                        $result = $conn->query($feedbackAll);
+                        generateFeedbackTable($result);
+                    }
+                    ?>
+                </main>
         </div>
     </div>
 
@@ -379,129 +492,112 @@ function show_forward_form(){
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.view-complaint').click(function() {
-                var cid = $(this).data('cid');
-                $.ajax({
-                    url: 'get_complaint_details.php',
-                    type: 'GET',
-                    data: { cid: cid },
-                    success: function(response) {
-                        $('#complaintDetailsContent').html(response);
-                        $('#complaintDetailsModal').modal('show');
-                    },
-                    error: function() {
-                        alert('Error fetching complaint details.');
-                    }
-                });
-            });
+    <div class="modal fade" id="feedbackDetailsModal" tabindex="-1" role="dialog" aria-labelledby="feedbackDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="feedbackDetailsModalLabel">Feedback Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="feedbackDetailsContent">
+                        <!-- Feedback details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            // $('.reply-complaint').click(function() {
-            //     var email = $(this).data('email');
-            //     // Implement reply functionality
-            //     alert('Reply to: ' + email);
-            // });
-
-            // Status change handler
-            $(document).on('change', '#status-form select', function(e) {
-                e.preventDefault();
-                var form = $(this).closest('form');
-                $.ajax({
-                    url: form.attr('action'),
-                    type: 'POST',
-                    data: form.serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if(response.success) {
-                            alert(response.message);
-                            location.reload(); // Refresh the page to reflect changes
-                        } else {
-                            alert('Error: ' + response.message);
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            $(document).ready(function() {
+              $('.view-complaint').click(function() {
+                    var cid = $(this).data('cid');
+                    $.ajax({
+                        url: 'get_complaint_details.php',
+                        type: 'GET',
+                        data: { cid: cid },
+                        success: function(response) {
+                            $('#complaintDetailsContent').html(response);
+                            $('#complaintDetailsModal').modal('show');
+                        },
+                        error: function() {
+                            alert('Error fetching complaint details.');
                         }
-                    },
-                    error: function() {
-                        alert('An error occurred while updating the status.');
-                    }
+                    });
                 });
-            });
-        });
-    </script>
 
-    <script>
-        $(document).ready(function() {
-            $('.view-complaint').click(function() {
-                var cid = $(this).data('cid');
-                $.ajax({
-                    url: 'get_complaint_details.php',
-                    type: 'GET',
-                    data: { cid: cid },
-                    success: function(response) {
-                        $('#complaintDetailsContent').html(response);
-                        $('#complaintDetailsModal').modal('show');
-                    },
-                    error: function() {
-                        alert('Error fetching complaint details.');
-                    }
-                });
-            });
-
-            $('.reply-complaint').click(function() {
-                var email = $(this).data('email');
-                var cid = $(this).closest('tr').find('td:first').text();
-                $('#replyEmail').val(email);
-                $('#replyCid').val(cid);
-                $('#replyModal').modal('show');
-            });
-
-            $('#replyForm').submit(function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: 'send_reply.php',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            alert(response.message);
-                            $('#replyModal').modal('hide');
-                            location.reload(); // Refresh the page to reflect changes
-                        } else {
-                            alert('Error: ' + response.message);
+              $('.view-feedback').click(function() {
+                    var fid = $(this).data('fid');
+                    $.ajax({
+                        url: 'get_feedback_details.php',
+                        type: 'GET',
+                        data: { fid: fid },
+                        success: function(response) {
+                            $('#feedbackDetailsContent').html(response);
+                            $('#feedbackDetailsModal').modal('show');
+                        },
+                        error: function() {
+                            alert('Error fetching feedback details.');
                         }
-                    },
-                    error: function() {
-                        alert('An error occurred while sending the reply.');
-                    }
+                    });
                 });
-            });
 
-            // Status change handler
-            $(document).on('change', '#status-form select', function(e) {
-                e.preventDefault();
-                var form = $(this).closest('form');
-                $.ajax({
-                    url: form.attr('action'),
-                    type: 'POST',
-                    data: form.serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if(response.success) {
-                            alert(response.message);
-                            location.reload(); // Refresh the page to reflect changes
-                        } else {
-                            alert('Error: ' + response.message);
+                $('.reply-complaint').click(function() {
+                    var email = $(this).data('email');
+                    var cid = $(this).closest('tr').find('td:first').text();
+                    $('#replyEmail').val(email);
+                    $('#replyCid').val(cid);
+                    $('#replyModal').modal('show');
+                });
+
+                $('#replyForm').submit(function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: 'send_reply.php',
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.message);
+                                $('#replyModal').modal('hide');
+                                location.reload();
+                            } else {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('An error occurred while sending the reply.');
                         }
-                    },
-                    error: function() {
-                        alert('An error occurred while updating the status.');
-                    }
+                    });
+                });
+
+                // Status change handler
+                $(document).on('change', '#status-form select', function(e) {
+                    e.preventDefault();
+                    var form = $(this).closest('form');
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST',
+                        data: form.serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if(response.success) {
+                                alert(response.message);
+                                location.reload();
+                            } else {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('An error occurred while updating the status.');
+                        }
+                    });
                 });
             });
-        });
-    </script>
-</body>
-</html>
+        </script>
+    </body>
+    </html>
