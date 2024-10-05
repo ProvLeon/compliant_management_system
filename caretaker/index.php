@@ -627,6 +627,19 @@ function generateFeedbackTable($result) {
                         }
                     });
                 });
+                // Ensure reply functionality works in complaint details modal
+                    $('#complaintDetailsModal').on('shown.bs.modal', function () {
+                        $(this).find('.reply-btn').on('click', function() {
+                            var email = $(this).data('email');
+                            var cid = $(this).data('cid');
+                            $('#replyEmail').val(email);
+                            $('#replyCid').val(cid);
+                            $('#complaintDetailsModal').modal('hide');
+                            setTimeout(function() {
+                                $('#replyModal').modal('show');
+                            }, 500);
+                        });
+                    });
             });
         </script>
     </body>
